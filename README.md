@@ -32,20 +32,9 @@ Education and Certification history
 Spoken Languages
 Footer with availability status
 
-📬 Contact
-Email: afzalabd207@gmail.com
-Phone: +91 80734 34893
-LinkedIn: https://www.linkedin.com/in/abdulbaasit07
-
 🌟 Planned Improvements
 Add downloadable PDF resume
 Add blog or case studies section
 Add backend for contact form submission
 
-▶️ How to Run
-Just open index.html in any browser — no installation required.
-git clone <repository-url>
-open index.html
-
-
-⭐ If you like this project, consider starring the repo and sharing feedback!
+⭐ If you like this project, consider sharing feedback!
