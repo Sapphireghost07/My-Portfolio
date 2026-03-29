@@ -50,6 +50,42 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   }
+
+  const awardThumb = document.querySelector(".award-thumb");
+  const awardModal = document.getElementById("awardModal");
+  const awardModalImage = document.getElementById("awardModalImage");
+  const awardModalClose = document.getElementById("awardModalClose");
+
+  if (awardThumb && awardModal && awardModalImage && awardModalClose) {
+    const openAwardModal = () => {
+      const source = awardThumb.getAttribute("data-full-src") || awardThumb.getAttribute("src");
+      const alt = awardThumb.getAttribute("alt") || "Award certificate";
+      awardModalImage.setAttribute("src", source);
+      awardModalImage.setAttribute("alt", alt);
+      awardModal.hidden = false;
+      document.body.style.overflow = "hidden";
+    };
+
+    const closeAwardModal = () => {
+      awardModal.hidden = true;
+      document.body.style.overflow = "";
+    };
+
+    awardThumb.addEventListener("dblclick", openAwardModal);
+    awardModalClose.addEventListener("click", closeAwardModal);
+
+    awardModal.addEventListener("click", (event) => {
+      if (event.target === awardModal) {
+        closeAwardModal();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !awardModal.hidden) {
+        closeAwardModal();
+      }
+    });
+  }
 }); 
 
 const canvas = document.getElementById("bgCanvas");
