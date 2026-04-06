@@ -1,0 +1,295 @@
+/* ═══════════════════════════════════════════════════
+   HERO PANEL — Visible text layered over 3D canvas
+   ═══════════════════════════════════════════════════ */
+
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-section a,
+.hero-section button { pointer-events: auto; }
+
+/* ── PANEL ──────────────────────────────────────── */
+.hero-panel {
+  position: relative;
+  z-index: 10;
+  padding: 0 0 0 7vw;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: heroPanelIn 1s cubic-bezier(0.22,1,0.36,1) both;
+  animation-delay: 0.8s;
+}
+@keyframes heroPanelIn {
+  from { opacity:0; transform:translateY(32px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── INTRO ROW: Avatar left + Name right ────────── */
+.hero-intro-row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+/* Avatar */
+.hero-avatar-wrap {
+  position: relative;
+  width: 90px; height: 90px;
+  flex-shrink: 0;
+}
+.hero-avatar {
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 3px solid rgba(255,179,71,0.55);
+  box-shadow: 0 0 0 5px rgba(255,179,71,0.1), 0 6px 28px rgba(0,0,0,0.6);
+  display: block;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.4s var(--ease-clay), box-shadow 0.4s ease;
+}
+.hero-avatar:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 0 7px rgba(255,179,71,0.2), 0 10px 36px rgba(255,179,71,0.2);
+}
+.hero-avatar-ring {
+  position: absolute; inset: -5px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,179,71,0.3);
+  animation: glowPulse 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Intro text column (label + name) */
+.hero-intro-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label */
+.hero-label {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--c-accent);
+  letter-spacing: 0.12em;
+  opacity: 0.9;
+}
+
+/* Name */
+.hero-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.4rem, 6vw, 4.4rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--c-text);
+  text-shadow: 0 2px 30px rgba(0,0,0,0.7), 0 0 60px rgba(255,179,71,0.08);
+  margin: 0;
+}
+.hero-name-accent {
+  color: var(--c-accent);
+  position: relative;
+  display: inline-block;
+}
+.hero-name-accent::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--c-accent), var(--c-accent2));
+  border-radius: 2px;
+  filter: blur(1px);
+  opacity: 0.65;
+}
+
+/* ── ROLE TYPEWRITER ────────────────────────────── */
+.hero-role-wrap {
+  font-family: var(--mono);
+  font-size: clamp(0.95rem, 2.2vw, 1.2rem);
+  color: var(--c-muted);
+  display: flex; align-items: baseline;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.7);
+}
+.hero-role-prefix { color: var(--c-muted); }
+.hero-role-text  { color: var(--c-accent2); font-weight: 700; min-width: 2ch; }
+.hero-cursor {
+  color: var(--c-accent);
+  animation: blinkCaret 0.9s step-end infinite;
+  font-size: 1.15em; margin-left: 1px;
+}
+
+/* ── BIO ────────────────────────────────────────── */
+.hero-bio {
+  font-size: clamp(0.86rem, 1.6vw, 0.98rem);
+  color: var(--c-muted);
+  line-height: 1.75;
+  max-width: 520px;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.8);
+}
+.hero-bio strong { color: var(--c-text); }
+.hero-award { color: var(--c-accent); font-weight: 600; white-space: nowrap; }
+
+/* ── AVAILABILITY BADGE ─────────────────────────── */
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 999px;
+  background: rgba(74,222,128,0.1);
+  border: 1px solid rgba(74,222,128,0.28);
+  color: #4ade80;
+  font-family: var(--mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  width: fit-content;
+  backdrop-filter: blur(8px);
+}
+.hero-badge-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: glowPulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ── CTA BUTTONS ────────────────────────────────── */
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.hero-btn-primary, .hero-btn-secondary {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 12px 26px; border-radius: 10px;
+  font-family: var(--mono);
+  font-size: 0.86rem; font-weight: 700;
+  letter-spacing: 0.04em;
+  transition: all 0.32s cubic-bezier(0.23,1,0.32,1);
+  text-decoration: none; white-space: nowrap;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+.hero-btn-primary {
+  background: var(--c-accent); color: #1a1008;
+  border: 1px solid var(--c-accent);
+  box-shadow: 0 4px 18px rgba(255,179,71,0.3);
+}
+.hero-btn-primary:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 10px 28px rgba(255,179,71,0.45);
+  background: #ffc84a;
+}
+.hero-btn-secondary {
+  background: rgba(255,255,255,0.07); color: var(--c-text);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.hero-btn-secondary:hover {
+  background: rgba(255,255,255,0.14);
+  border-color: var(--c-accent); color: var(--c-accent);
+  transform: translateY(-3px);
+}
+
+/* ── SOCIAL ICONS ───────────────────────────────── */
+.hero-socials { display: flex; gap: 12px; }
+.hero-social-link {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.05);
+  display: grid; place-items: center;
+  color: var(--c-muted); font-size: 0.92rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+.hero-social-link:hover {
+  border-color: var(--c-accent); color: var(--c-accent);
+  transform: translateY(-3px) rotate(-5deg);
+  background: rgba(255,179,71,0.1);
+  box-shadow: 0 0 12px rgba(255,179,71,0.2);
+}
+
+/* ── SCROLL HINT ────────────────────────────────── */
+.hero-scroll-hint {
+  position: absolute; bottom: 32px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  color: var(--c-muted);
+  font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.1em; text-transform: lowercase;
+  opacity: 0.6;
+  animation: floatHint 2.4s ease-in-out infinite;
+  pointer-events: none;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+.hero-scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, transparent, var(--c-accent));
+  animation: glowPulse 2.4s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════
+   DAY THEME — complete overrides for visibility
+   ═══════════════════════════════════════════════════ */
+body.theme-day .hero-name {
+  color: #FFF8E7; /* Keep light — overlays dark 3D canvas */
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+}
+body.theme-day .hero-bio {
+  color: rgba(255,248,231,0.75);
+  text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+}
+body.theme-day .hero-bio strong {
+  color: #FFF8E7;
+}
+body.theme-day .hero-role-wrap {
+  text-shadow: 0 1px 12px rgba(0,0,0,0.6);
+  color: rgba(255,248,231,0.6);
+}
+body.theme-day .hero-label {
+  color: var(--c-accent);
+}
+body.theme-day .hero-avatar {
+  border-color: rgba(74,144,217,0.5);
+  box-shadow: 0 0 0 5px rgba(74,144,217,0.1), 0 6px 24px rgba(44,24,16,0.2);
+}
+body.theme-day .hero-avatar-ring { border-color: rgba(74,144,217,0.3); }
+body.theme-day .hero-btn-secondary {
+  background: rgba(44,24,16,0.07);
+  border-color: rgba(44,24,16,0.2);
+  color: var(--c-text);
+}
+body.theme-day .hero-btn-secondary:hover {
+  background: rgba(44,24,16,0.12);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+body.theme-day .hero-social-link {
+  border-color: rgba(44,24,16,0.18);
+  background: rgba(44,24,16,0.04);
+  color: var(--c-muted);
+}
+body.theme-day .hero-social-link:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+  background: rgba(255,179,71,0.08);
+}
+body.theme-day .hero-scroll-hint {
+  color: var(--c-muted);
+  text-shadow: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .hero-panel { padding: 80px 20px 0; max-width: 100%; }
+  .hero-intro-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .hero-avatar-wrap { width: 70px; height: 70px; }
+  .hero-avatar { width: 70px; height: 70px; }
+  .hero-ctas { flex-direction: column; }
+  .hero-btn-primary, .hero-btn-secondary { width: 100%; justify-content: center; }
+}

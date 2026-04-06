@@ -1,0 +1,61 @@
+/* ── LOADING SCREEN ─────────────────────────────── */
+#preloader {
+  position: fixed; inset: 0;
+  background: #1A1008;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  transition: opacity 0.8s ease;
+}
+
+#preloader.hidden { opacity: 0; pointer-events: none; }
+
+.loader-title {
+  font-family: var(--mono, 'Space Mono', monospace);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #FFB347;
+  letter-spacing: 0.06em;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+
+.loader-title span { color: #FFF8E7; }
+
+/* Clay worm progress bar */
+.loader-bar-wrap {
+  width: min(320px, 80vw);
+  height: 8px;
+  background: rgba(255,179,71,0.1);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(255,179,71,0.15);
+}
+
+#preloaderProgress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #FFB347, #00FFCC);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+  box-shadow: 0 0 12px rgba(255,179,71,0.5);
+}
+
+#preloaderText {
+  font-family: var(--mono, 'Space Mono', monospace);
+  font-size: 0.8rem;
+  color: #A0896B;
+  letter-spacing: 0.08em;
+}
+
+/* Decorative rotating ring */
+.loader-ring {
+  width: 60px; height: 60px;
+  position: relative;
+}
+.loader-ring svg {
+  animation: spinRing 1.4s linear infinite;
+  width: 60px; height: 60px;
+}

@@ -1,0 +1,35 @@
+/* ═══════════════════════════════════════════════
+   CURSOR — Decorative ring + dot (native cursor stays)
+   ═══════════════════════════════════════════════ */
+
+.cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,179,71,0.3);
+  pointer-events: none;
+  z-index: 99998;
+  mix-blend-mode: exclusion;
+  will-change: transform;
+  transition: opacity 0.3s ease;
+  opacity: 0.7;
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--c-accent, #FFB347);
+  pointer-events: none;
+  z-index: 99999;
+  will-change: transform;
+  box-shadow: 0 0 6px rgba(255,179,71,0.5);
+  opacity: 0.85;
+}
+
+/* Hide decorative cursor on touch / when no mouse */
+@media (pointer: coarse) {
+  .cursor-ring, .cursor-dot { display: none; }
+}

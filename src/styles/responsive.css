@@ -1,0 +1,51 @@
+/* ── RESPONSIVE ─────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .side-dots { display: none; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 640px) {
+  .top-nav { padding: 0 16px; height: 56px; }
+  .btn-resume span { display: none; }
+
+  .award-spotlight { flex-direction: column; padding: 24px; }
+  .award-thumb { width: 100%; }
+
+  .footer-inner { flex-direction: column; align-items: center; text-align: center; }
+
+  .pm-body { padding: 18px; }
+}
+
+@media (max-width: 420px) {
+  .section-title { font-size: 1.6rem; }
+}
+
+/* ── REDUCED MOTION ─────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal-up, .reveal-left, .reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Show all content immediately */
+  body::after { display: none; }
+}
+
+/* ── DAY THEME OVERRIDES ─────────────────────────── */
+body.theme-day .timeline::before {
+  background: linear-gradient(180deg, var(--c-accent), transparent);
+}
+
+body.theme-day .card {
+  box-shadow: 0 12px 40px rgba(44,24,16,0.12);
+}
+
+body.theme-day ::-webkit-scrollbar-track { background: var(--c-bg); }
+body.theme-day ::-webkit-scrollbar-thumb { background: rgba(74,144,217,0.3); }

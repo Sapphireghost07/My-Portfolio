@@ -1,0 +1,196 @@
+/* ── TOP NAV ─────────────────────────────────────── */
+.top-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 36px;
+  height: 64px;
+  background: rgba(26,16,8,0.7);
+  backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(255,179,71,0.08);
+  transition: all 0.3s ease;
+}
+
+body.theme-day .top-nav {
+  background: rgba(237,224,196,0.82);
+  border-bottom-color: rgba(74,144,217,0.12);
+}
+
+.nav-brand {
+  font-family: var(--mono);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--c-text);
+  letter-spacing: 0.04em;
+  transition: color 0.3s ease;
+}
+.nav-brand:hover { color: var(--c-accent); }
+.brand-dot { color: var(--c-accent); }
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--c-muted);
+  letter-spacing: 0.05em;
+  transition: color 0.25s ease;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 2px;
+  background: var(--c-accent);
+  border-radius: 2px;
+  transition: width 0.3s var(--ease-clay);
+}
+
+.nav-links a:hover { color: var(--c-accent); }
+.nav-links a:hover::after { width: 100%; }
+
+.nav-actions { display: flex; align-items: center; gap: 12px; }
+
+.btn-resume {
+  background: transparent;
+  border: 1px solid var(--c-accent);
+  color: var(--c-accent);
+  padding: 7px 18px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--mono);
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: 0.04em;
+}
+
+.btn-resume:hover {
+  background: var(--c-accent);
+  color: var(--c-bg);
+  box-shadow: 0 0 20px var(--c-glow);
+  transform: translateY(-1px);
+}
+
+/* Theme toggle — lamp style */
+.theme-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--c-border);
+  background: rgba(255,179,71,0.06);
+  color: var(--c-text);
+  position: relative;
+  display: grid; place-items: center;
+  transition: transform 0.4s var(--ease-clay), box-shadow 0.3s ease;
+}
+
+.theme-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 16px var(--c-glow);
+}
+
+.theme-btn .icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: none;
+}
+
+/* Night: moon visible */
+.theme-btn .moon { opacity: 1; transform: scale(1); }
+.theme-btn .sun  { opacity: 0; transform: scale(0.5) rotate(-30deg); }
+
+/* Day: sun visible */
+body.theme-day .theme-btn .sun  { opacity: 1; transform: scale(1); }
+body.theme-day .theme-btn .moon { opacity: 0; transform: scale(0.5) rotate(30deg); }
+
+/* ── SIDE DOTS NAV ───────────────────────────────── */
+.side-dots {
+  position: fixed;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,179,71,0.4);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.35s var(--ease-clay);
+  position: relative;
+}
+
+.dot::after {
+  content: attr(data-label);
+  position: absolute;
+  right: 20px;
+  top: 50%; transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.68rem;
+  font-family: var(--mono);
+  color: var(--c-accent);
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  padding: 3px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.dot:hover::after, .dot.active::after { opacity: 1; }
+
+.dot:hover, .dot.active {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  box-shadow: 0 0 10px var(--c-glow);
+  transform: scale(1.4);
+}
+
+/* ── SCROLL ZONE LABELS (appear in 3D space) ─────── */
+.zone-label {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--c-comment);
+  letter-spacing: 0.1em;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 700;
+  transition: opacity 0.5s ease;
+}
+.zone-label.visible { opacity: 0.7; }
+
+/* ── LIVE CLOCK top-right ─────────────────────────── */
+#live-clock-wrap {
+  position: fixed;
+  top: 72px; right: 24px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--c-comment);
+  opacity: 0.6;
+  z-index: 750;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}

@@ -7,59 +7,75 @@
   <meta name="description" content="S Abdul Baasit – Software Developer specialising in Angular, TypeScript and AI-assisted development. Available for work.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer"/>
-  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="/src/main.js"></script>
+  <style>
+    /* Critical above-fold styles to prevent flash */
+    html, body { margin: 0; padding: 0; background: #1A1008; color: #FFF8E7; }
+    #preloader {
+      position: fixed; inset: 0; background: #1A1008;
+      z-index: 99999; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 28px;
+    }
+  </style>
 </head>
 <body>
 
   <!-- ██ PRELOADER ██ -->
-  <div id="preloader" class="preloader">
-    <div class="preloader-inner">
-      <svg class="preloader-ring" viewBox="0 0 80 80">
-        <circle cx="40" cy="40" r="34" fill="none" stroke="url(#ring-grad)" stroke-width="3" stroke-dasharray="180 40"/>
+  <div id="preloader">
+    <div class="loader-ring">
+      <svg viewBox="0 0 60 60">
+        <circle cx="30" cy="30" r="25" fill="none" stroke="url(#ld-grad)" stroke-width="2.5" stroke-dasharray="120 40"/>
         <defs>
-          <linearGradient id="ring-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#00c8ff"/>
-            <stop offset="100%" stop-color="#8b5cf6"/>
+          <linearGradient id="ld-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFB347"/>
+            <stop offset="100%" stop-color="#00FFCC"/>
           </linearGradient>
         </defs>
       </svg>
-      <span class="preloader-text">SAB</span>
     </div>
+    <div class="loader-title"><span>SAB</span>.</div>
+    <div class="loader-bar-wrap">
+      <div id="preloaderProgress"></div>
+    </div>
+    <p id="preloaderText">brewing your portfolio... 0%</p>
   </div>
 
-  <!-- ██ THREE.JS CANVAS ██ -->
+  <!-- ██ THREE.JS CANVAS (fixed, full-screen, z=0) ██ -->
   <canvas id="bg3d" aria-hidden="true"></canvas>
 
   <!-- ██ SCROLL PROGRESS ██ -->
   <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
 
+  <!-- ██ LIVE CLOCK ██ -->
+  <div id="live-clock-wrap" aria-hidden="true">
+    <span id="live-clock">00:00:00</span>
+  </div>
+
   <!-- ██ SIDE DOT NAV ██ -->
   <nav class="side-dots" aria-label="Page sections">
-    <a href="#hero"           class="dot active" data-label="Home"             data-target="hero"></a>
-    <a href="#skills"         class="dot"         data-label="Skills"           data-target="skills"></a>
-    <a href="#experience"     class="dot"         data-label="Experience"       data-target="experience"></a>
-    <a href="#projects"       class="dot"         data-label="Projects"         data-target="projects"></a>
-    <a href="#education"      class="dot"         data-label="Education"        data-target="education"></a>
-    <a href="#certifications" class="dot"         data-label="Certifications"   data-target="certifications"></a>
-    <a href="#awards"         class="dot"         data-label="Awards"           data-target="awards"></a>
+    <a href="#hero"           class="dot active" data-label="// home"    data-target="hero"          aria-label="Hero section"></a>
+    <a href="#about"          class="dot"         data-label="// about"   data-target="about"         aria-label="About section"></a>
+    <a href="#projects"       class="dot"         data-label="// projects"data-target="projects"      aria-label="Projects section"></a>
+    <a href="#skills"         class="dot"         data-label="// skills"  data-target="skills"        aria-label="Skills section"></a>
+    <a href="#contact"        class="dot"         data-label="// contact" data-target="contact"       aria-label="Contact section"></a>
   </nav>
 
   <!-- ██ TOP NAV ██ -->
   <header class="top-nav" id="topNav">
     <a href="#hero" class="nav-brand" aria-label="Back to top">SAB<span class="brand-dot">.</span></a>
     <nav class="nav-links" aria-label="Site sections">
-      <a href="#skills">Skills</a>
-      <a href="#experience">Experience</a>
+      <a href="#about">About</a>
       <a href="#projects">Projects</a>
-      <a href="#awards">Awards</a>
+      <a href="#skills">Skills</a>
+      <a href="#contact">Contact</a>
     </nav>
     <div class="nav-actions">
-      <a href="assets/Abdul_Baasit_Updated_Resume.pdf" target="_blank" rel="noreferrer" class="btn-resume" id="nav-resume">
-        <i class="fa-solid fa-file-arrow-down"></i> Resume
+      <a href="assets/Abdul_Baasit_Updated_Resume.pdf" target="_blank" rel="noreferrer" class="btn-resume magnetic" id="nav-resume" aria-label="Download resume">
+        <i class="fa-solid fa-file-arrow-down"></i> <span>Resume</span>
       </a>
-      <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
+      <button id="themeToggle" class="theme-btn magnetic" type="button" aria-label="Toggle day/night theme">
         <span class="icon sun" aria-hidden="true"><i class="fa-solid fa-sun"></i></span>
         <span class="icon moon" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
       </button>
@@ -67,52 +83,275 @@
   </header>
 
   <!-- ██ PAGE CONTENT ██ -->
-  <main>
+  <!-- These sections provide the scroll height that drives the 3D camera -->
+  <div id="scroll-container">
 
     <!-- ═══════════ HERO ═══════════ -->
-    <section id="hero" class="section hero-section">
-      <div class="hero-inner">
-        <div class="hero-photo-wrap">
-          <img src="assets/profile.jpg" alt="Portrait of S Abdul Baasit" class="hero-photo" width="140" height="140">
+    <section id="hero" class="section hero-section" aria-label="Introduction">
+
+      <div class="hero-panel">
+
+        <!-- Row: Avatar + Name -->
+        <div class="hero-intro-row">
+          <div class="hero-avatar-wrap">
+            <img src="assets/profile.jpg" alt="S Abdul Baasit" class="hero-avatar" width="90" height="90" loading="eager">
+            <span class="hero-avatar-ring" aria-hidden="true"></span>
+          </div>
+          <div class="hero-intro-text">
+            <span class="hero-label">// hello world</span>
+            <h1 class="hero-name">S&nbsp;<span class="hero-name-accent">Abdul</span>&nbsp;Baasit</h1>
+          </div>
         </div>
-        <div class="hero-content">
-          <p class="hero-sub reveal-up" style="--d:0.1s">
-            <span class="blink-dot"></span>Available for work
-          </p>
-          <h1 class="hero-name reveal-up" style="--d:0.25s">
-            S&nbsp;Abdul<br>Baasit
-          </h1>
-          <p class="hero-role reveal-up" style="--d:0.4s">
-            <span class="typing-label">Software Developer — </span>
-            <span id="typingRole" class="typing-role"
-              data-roles='["Angular & TypeScript","REST API Integration","Responsive UI Engineering","AI-Assisted Development"]'
-            ></span>
-          </p>
-          <p class="hero-bio reveal-up" style="--d:0.55s">
+
+        <!-- Animated role -->
+        <div class="hero-role-wrap" aria-label="Software Developer">
+          <span class="hero-role-prefix">I build&nbsp;</span>
+          <span class="hero-role-text" id="heroRoleText">Angular apps</span>
+          <span class="hero-cursor" aria-hidden="true">_</span>
+        </div>
+
+        <!-- Bio -->
+        <p class="hero-bio">
+          Hands-on experience building enterprise-grade Angular applications at&nbsp;<strong>Petro Infotech</strong>.
+          Proud recipient of the&nbsp;<span class="hero-award">🏆&nbsp;AI Transition Award</span>
+          for integrating AI tools across the SDLC.
+        </p>
+
+        <!-- Availability badge -->
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span> Available for work
+        </div>
+
+        <!-- CTA buttons -->
+        <div class="hero-ctas">
+          <a href="#about" class="hero-btn-primary magnetic">
+            <i class="fa-solid fa-rocket"></i> See My Work
+          </a>
+          <a href="assets/Abdul_Baasit_Updated_Resume.pdf" target="_blank" rel="noreferrer" class="hero-btn-secondary magnetic">
+            <i class="fa-solid fa-file-arrow-down"></i> Resume
+          </a>
+        </div>
+
+        <!-- Socials -->
+        <div class="hero-socials">
+          <a href="mailto:afzalabd207@gmail.com" aria-label="Email" class="hero-social-link"><i class="fa-solid fa-envelope"></i></a>
+          <a href="https://www.linkedin.com/in/abdulbaasit07" target="_blank" rel="noreferrer" aria-label="LinkedIn" class="hero-social-link"><i class="fa-brands fa-linkedin"></i></a>
+          <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub" class="hero-social-link"><i class="fa-brands fa-github"></i></a>
+        </div>
+      </div>
+
+      <!-- Scroll CTA -->
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span>scroll to explore</span>
+        <div class="hero-scroll-line"></div>
+      </div>
+
+      <h1 class="sr-only">S Abdul Baasit — Software Developer</h1>
+    </section>
+
+    <!-- ═══════════ ABOUT ═══════════ -->
+    <section id="about" class="section content-section" aria-label="About me">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <span class="section-label">// who i am</span>
+          <h2 class="section-title">About</h2>
+        </div>
+
+        <!-- Experience Timeline -->
+        <div class="timeline" aria-label="Work experience">
+
+          <div class="timeline-item reveal-left" style="--d:0.1s">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card card">
+              <div class="tl-head">
+                <div>
+                  <h3 class="tl-title">Software Developer Trainee</h3>
+                  <p class="tl-meta">Petro Infotech &nbsp;·&nbsp; Oct 2025 – Present &nbsp;·&nbsp; Kozhikode (On-site)</p>
+                </div>
+                <span class="badge badge-current">Current</span>
+              </div>
+              <ul class="tl-list">
+                <li>Developed and enhanced frontend features for <strong>DigiHR</strong> — an HR management platform — building Angular components, services, and routing for employee, payroll, and attendance workflows.</li>
+                <li>Contributed to <strong>NBG DigiHR</strong> (government deployment for Oman), implementing Angular UI logic and integrating ASP.NET Web API endpoints for client-specific requirements.</li>
+                <li>Worked on <strong>IGC-MIS</strong> for Integrated Gas Company (Oman), handling Angular development and API integration, with AI-assisted support for PL/SQL procedures.</li>
+                <li>Applied AI-assisted development tools across SDLC tasks to accelerate implementation and improve test case quality.</li>
+                <li>Received the <strong>AI Transition Award</strong> for notable contributions integrating AI tools into workflows.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="timeline-item reveal-right" style="--d:0.2s">
+            <div class="timeline-dot"></div>
+            <div class="timeline-card card">
+              <div class="tl-head">
+                <div>
+                  <h3 class="tl-title">Frontend Developer Intern</h3>
+                  <p class="tl-meta">Edunet Foundation &nbsp;·&nbsp; Jun 2024 – Jul 2024 &nbsp;·&nbsp; Remote</p>
+                </div>
+                <span class="badge">Internship</span>
+              </div>
+              <ul class="tl-list">
+                <li>Built a responsive e-commerce web application with dynamic product listings, category filters, search, and checkout flow using HTML, CSS, and JavaScript.</li>
+                <li>Improved UI consistency and accessibility across pages, gaining practical experience in responsive design and real-world frontend development.</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Bio -->
+        <div class="card reveal-up" style="--d:0.3s; margin-top:28px;">
+          <p class="section-label">// bio</p>
+          <p style="font-size:0.95rem; color:var(--c-muted); line-height:1.8;">
             Hands-on experience building enterprise-grade Angular applications at Petro Infotech.
             Proud recipient of the <strong>AI Transition Award</strong> for integrating AI tools across the SDLC.
           </p>
-          <div class="hero-links reveal-up" style="--d:0.7s">
-            <a href="mailto:afzalabd207@gmail.com"   class="hero-link" id="h-email"><i class="fa-solid fa-envelope"></i> Email</a>
-            <a href="tel:+918073434893"              class="hero-link" id="h-call"><i class="fa-solid fa-phone"></i> Call</a>
-            <a href="https://www.linkedin.com/in/abdulbaasit07" target="_blank" rel="noreferrer" class="hero-link" id="h-linkedin"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;">
+            <a href="mailto:afzalabd207@gmail.com" class="btn-resume magnetic" style="border-radius:999px;font-size:0.82rem;"><i class="fa-solid fa-envelope"></i> Email</a>
+            <a href="tel:+918073434893" class="btn-resume magnetic" style="border-radius:999px;font-size:0.82rem;"><i class="fa-solid fa-phone"></i> Call</a>
+            <a href="https://www.linkedin.com/in/abdulbaasit07" target="_blank" rel="noreferrer" class="btn-resume magnetic" style="border-radius:999px;font-size:0.82rem;"><i class="fa-brands fa-linkedin"></i> LinkedIn</a>
           </div>
         </div>
+
+        <!-- Education -->
+        <div class="section-header reveal-up" style="--d:0.4s; margin-top:60px;">
+          <span class="section-label">// where i learned</span>
+          <h2 class="section-title">Education</h2>
+        </div>
+        <div class="edu-grid">
+          <div class="edu-card card reveal-up" style="--d:0.05s">
+            <i class="fa-solid fa-graduation-cap edu-icon"></i>
+            <h3>B.Tech — Computer Science Engineering</h3>
+            <p class="edu-meta">BSA Crescent Institute of Science &amp; Technology, Chennai</p>
+            <p class="edu-detail">2021 – 2025 &nbsp;·&nbsp; CGPA: <strong>7.75</strong></p>
+          </div>
+          <div class="edu-card card reveal-up" style="--d:0.15s">
+            <i class="fa-solid fa-school edu-icon"></i>
+            <h3>Senior Secondary (CBSE, Class XII)</h3>
+            <p class="edu-meta">Velammal Vidhyashram, Chennai</p>
+            <p class="edu-detail">2019 – 2021 &nbsp;·&nbsp; <strong>81.2%</strong></p>
+          </div>
+          <div class="edu-card card reveal-up" style="--d:0.25s">
+            <i class="fa-solid fa-book-open edu-icon"></i>
+            <h3>Secondary (CBSE, Class X)</h3>
+            <p class="edu-meta">TMAES DAV Public School, Hospet</p>
+            <p class="edu-detail">2019 &nbsp;·&nbsp; <strong>85%</strong></p>
+          </div>
+        </div>
+
+        <!-- Certifications -->
+        <div class="section-header reveal-up" style="--d:0.1s; margin-top:60px;">
+          <span class="section-label">// credentials</span>
+          <h2 class="section-title">Certifications</h2>
+        </div>
+        <div class="cert-grid">
+          <div class="cert-card card reveal-up" style="--d:0.05s">
+            <i class="fa-solid fa-certificate cert-icon"></i>
+            <div>
+              <h3>Full Stack Developer</h3>
+              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
+            </div>
+          </div>
+          <div class="cert-card card reveal-up" style="--d:0.15s">
+            <i class="fa-brands fa-python cert-icon" style="color:#3776ab"></i>
+            <div>
+              <h3>Python Certification</h3>
+              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
+            </div>
+          </div>
+          <div class="cert-card card reveal-up" style="--d:0.25s">
+            <i class="fa-solid fa-laptop-code cert-icon" style="color:#00c8ff"></i>
+            <div>
+              <h3>Front-End Development</h3>
+              <p class="cert-meta">IBM SkillsBuild &nbsp;·&nbsp; 2024</p>
+            </div>
+          </div>
+        </div>
+
       </div>
-      <div class="scroll-down-hint" aria-hidden="true">
-        <span>Scroll</span>
-        <div class="scroll-arrow"></div>
+    </section>
+
+    <!-- ═══════════ PROJECTS ═══════════ -->
+    <section id="projects" class="section content-section" aria-label="Projects">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <span class="section-label">// what i built</span>
+          <h2 class="section-title">Projects</h2>
+        </div>
+
+        <!-- Instruction: 3D floppy disks on monitor (above) + HTML cards below -->
+        <p class="section-label reveal-up" style="--d:0.1s; margin-bottom:24px;">click the floppy disks on the monitor above · or browse below</p>
+
+        <div class="projects-grid">
+
+          <article class="project-card card reveal-up" style="--d:0.05s">
+            <div class="project-icon"><i class="fa-solid fa-briefcase"></i></div>
+            <h3>CareerConnect</h3>
+            <p class="project-sub">Role-Based Job Board Application</p>
+            <div class="tech-tags">
+              <span>Angular</span><span>TypeScript</span><span>PrimeNG</span><span>SweetAlert2</span><span>SCSS</span>
+            </div>
+            <ul class="project-list">
+              <li>Full job board with separate Job Seeker and Employer experiences using component-driven Angular.</li>
+              <li>Route guards and role-based access control for secure navigation and personalised dashboards.</li>
+              <li>Employer-side CRUD for job listings; job seeker workflows for profile creation and application tracking.</li>
+            </ul>
+          </article>
+
+          <article class="project-card card reveal-up" style="--d:0.15s">
+            <div class="project-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <h3>User Management System</h3>
+            <p class="project-sub">Full CRUD with REST API</p>
+            <div class="tech-tags">
+              <span>Angular</span><span>TypeScript</span><span>JSON Server</span><span>HttpClient</span><span>SweetAlert2</span>
+            </div>
+            <ul class="project-list">
+              <li>Full CRUD with Angular Reactive Forms, services, routing, and REST API integration via JSON Server.</li>
+              <li>Input validation, reusable component design, smooth user workflows for creating, updating, deleting records.</li>
+              <li>Toastr notifications, SweetAlert2 confirmations, and Font Awesome iconography.</li>
+            </ul>
+          </article>
+
+          <article class="project-card card reveal-up" style="--d:0.25s">
+            <div class="project-icon"><i class="fa-solid fa-globe"></i></div>
+            <h3>Personal Portfolio</h3>
+            <p class="project-sub">3D Immersive Website</p>
+            <div class="tech-tags">
+              <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Three.js</span><span>GitHub Pages</span>
+            </div>
+            <ul class="project-list">
+              <li>Designed and deployed a responsive portfolio with dark/light theming, 3D scroll effects, and immersive Three.js background.</li>
+              <li>Hosted on GitHub Pages with optimised assets for consistent performance across devices.</li>
+            </ul>
+          </article>
+
+          <article class="project-card card reveal-up" style="--d:0.35s">
+            <div class="project-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <h3>Flipkart Clone</h3>
+            <p class="project-sub">E-Commerce UI</p>
+            <div class="tech-tags">
+              <span>HTML5</span><span>CSS3</span><span>JavaScript</span>
+            </div>
+            <ul class="project-list">
+              <li>Responsive e-commerce UI clone with product listings, category browsing, search, filtering, and cart flow built with modular JavaScript.</li>
+            </ul>
+          </article>
+
+        </div>
       </div>
     </section>
 
     <!-- ═══════════ SKILLS ═══════════ -->
-    <section id="skills" class="section content-section">
+    <section id="skills" class="section content-section" aria-label="Skills">
       <div class="container">
-        <div class="section-header">
-          <span class="section-num">01</span>
+        <div class="section-header reveal-up">
+          <span class="section-label">// what i know</span>
           <h2 class="section-title">Skills</h2>
         </div>
-        <div class="skills-grid reveal-up">
+
+        <p class="section-label reveal-up" style="--d:0.1s; margin-bottom:24px;">hover the books on the shelf · or browse the full list below</p>
+
+        <div class="skills-grid reveal-up" style="--d:0.15s">
           <div class="skill-group">
             <h3 class="skill-group-label">Core</h3>
             <div class="pill-row">
@@ -152,7 +391,7 @@
             </div>
           </div>
           <div class="skill-group">
-            <h3 class="skill-group-label">Tools & Languages</h3>
+            <h3 class="skill-group-label">Tools &amp; Languages</h3>
             <div class="pill-row">
               <span class="pill"><i class="fa-brands fa-python" style="color:#3776ab"></i> Python</span>
               <span class="pill"><i class="fa-brands fa-github"></i> GitHub</span>
@@ -166,193 +405,14 @@
       </div>
     </section>
 
-    <!-- ═══════════ EXPERIENCE ═══════════ -->
-    <section id="experience" class="section content-section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-num">02</span>
-          <h2 class="section-title">Experience</h2>
-        </div>
-        <div class="timeline">
-
-          <div class="timeline-item reveal-left">
-            <div class="timeline-dot"></div>
-            <div class="timeline-card card-3d">
-              <div class="tl-head">
-                <div>
-                  <h3 class="tl-title">Software Developer Trainee</h3>
-                  <p class="tl-meta">Petro Infotech &nbsp;·&nbsp; Oct 2025 – Present &nbsp;·&nbsp; Kozhikode (On-site)</p>
-                </div>
-                <span class="badge badge-current">Current</span>
-              </div>
-              <ul class="tl-list">
-                <li>Developed and enhanced frontend features for <strong>DigiHR</strong> — an HR management platform — building Angular components, services, and routing for employee, payroll, and attendance workflows.</li>
-                <li>Contributed to <strong>NBG DigiHR</strong> (government deployment for Oman), implementing Angular UI logic and integrating ASP.NET Web API endpoints for client-specific requirements.</li>
-                <li>Worked on <strong>IGC-MIS</strong> for Integrated Gas Company (Oman), handling Angular development and API integration, with AI-assisted support for PL/SQL procedures.</li>
-                <li>Applied AI-assisted development tools across SDLC tasks to accelerate implementation and improve test case quality.</li>
-                <li>Received the <strong>AI Transition Award</strong> for notable contributions integrating AI tools into workflows.</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="timeline-item reveal-right">
-            <div class="timeline-dot"></div>
-            <div class="timeline-card card-3d">
-              <div class="tl-head">
-                <div>
-                  <h3 class="tl-title">Frontend Developer Intern</h3>
-                  <p class="tl-meta">Edunet Foundation &nbsp;·&nbsp; Jun 2024 – Jul 2024 &nbsp;·&nbsp; Remote</p>
-                </div>
-                <span class="badge">Internship</span>
-              </div>
-              <ul class="tl-list">
-                <li>Built a responsive e-commerce web application with dynamic product listings, category filters, search, and checkout flow using HTML, CSS, and JavaScript.</li>
-                <li>Improved UI consistency and accessibility across pages, gaining practical experience in responsive design and real-world frontend development.</li>
-              </ul>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════ PROJECTS ═══════════ -->
-    <section id="projects" class="section content-section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-num">03</span>
-          <h2 class="section-title">Projects</h2>
-        </div>
-        <div class="projects-grid">
-
-          <article class="project-card card-3d reveal-up" style="--d:0.05s">
-            <div class="project-icon"><i class="fa-solid fa-briefcase"></i></div>
-            <h3>CareerConnect</h3>
-            <p class="project-sub">Role-Based Job Board Application</p>
-            <div class="tech-tags">
-              <span>Angular</span><span>TypeScript</span><span>PrimeNG</span><span>SweetAlert2</span><span>SCSS</span>
-            </div>
-            <ul class="project-list">
-              <li>Full job board with separate Job Seeker and Employer experiences using component-driven Angular.</li>
-              <li>Route guards and role-based access control for secure navigation and personalised dashboards.</li>
-              <li>Employer-side CRUD for job listings; job seeker workflows for profile creation and application tracking.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.15s">
-            <div class="project-icon"><i class="fa-solid fa-users-gear"></i></div>
-            <h3>User Management System</h3>
-            <p class="project-sub">Full CRUD with REST API</p>
-            <div class="tech-tags">
-              <span>Angular</span><span>TypeScript</span><span>JSON Server</span><span>HttpClient</span><span>SweetAlert2</span>
-            </div>
-            <ul class="project-list">
-              <li>Full CRUD with Angular Reactive Forms, services, routing, and REST API integration via JSON Server.</li>
-              <li>Input validation, reusable component design, smooth user workflows for creating, updating, deleting records.</li>
-              <li>Toastr notifications, SweetAlert2 confirmations, and Font Awesome iconography.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.25s">
-            <div class="project-icon"><i class="fa-solid fa-globe"></i></div>
-            <h3>Personal Portfolio</h3>
-            <p class="project-sub">3D Immersive Website</p>
-            <div class="tech-tags">
-              <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Three.js</span><span>GitHub Pages</span>
-            </div>
-            <ul class="project-list">
-              <li>Designed and deployed a responsive portfolio with dark/light theming, 3D scroll effects, and immersive Three.js background.</li>
-              <li>Hosted on GitHub Pages with optimised assets for consistent performance across devices.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.35s">
-            <div class="project-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-            <h3>Flipkart Clone</h3>
-            <p class="project-sub">E-Commerce UI</p>
-            <div class="tech-tags">
-              <span>HTML5</span><span>CSS3</span><span>JavaScript</span>
-            </div>
-            <ul class="project-list">
-              <li>Responsive e-commerce UI clone with product listings, category browsing, search, filtering, and cart flow built with modular JavaScript.</li>
-            </ul>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════ EDUCATION ═══════════ -->
-    <section id="education" class="section content-section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-num">04</span>
-          <h2 class="section-title">Education</h2>
-        </div>
-        <div class="edu-grid">
-          <div class="edu-card card-3d reveal-up" style="--d:0.05s">
-            <i class="fa-solid fa-graduation-cap edu-icon"></i>
-            <h3>B.Tech — Computer Science Engineering</h3>
-            <p class="edu-meta">BSA Crescent Institute of Science & Technology, Chennai</p>
-            <p class="edu-detail">2021 – 2025 &nbsp;·&nbsp; CGPA: <strong>7.75</strong></p>
-          </div>
-          <div class="edu-card card-3d reveal-up" style="--d:0.15s">
-            <i class="fa-solid fa-school edu-icon"></i>
-            <h3>Senior Secondary (CBSE, Class XII)</h3>
-            <p class="edu-meta">Velammal Vidhyashram, Chennai</p>
-            <p class="edu-detail">2019 – 2021 &nbsp;·&nbsp; <strong>81.2%</strong></p>
-          </div>
-          <div class="edu-card card-3d reveal-up" style="--d:0.25s">
-            <i class="fa-solid fa-book-open edu-icon"></i>
-            <h3>Secondary (CBSE, Class X)</h3>
-            <p class="edu-meta">TMAES DAV Public School, Hospet</p>
-            <p class="edu-detail">2019 &nbsp;·&nbsp; <strong>85%</strong></p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ═══════════ CERTIFICATIONS ═══════════ -->
-    <section id="certifications" class="section content-section">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-num">05</span>
-          <h2 class="section-title">Certifications</h2>
-        </div>
-        <div class="cert-grid">
-          <div class="cert-card card-3d reveal-up" style="--d:0.05s">
-            <i class="fa-solid fa-certificate cert-icon"></i>
-            <div>
-              <h3>Full Stack Developer</h3>
-              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
-            </div>
-          </div>
-          <div class="cert-card card-3d reveal-up" style="--d:0.15s">
-            <i class="fa-brands fa-python cert-icon" style="color:#3776ab"></i>
-            <div>
-              <h3>Python Certification</h3>
-              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
-            </div>
-          </div>
-          <div class="cert-card card-3d reveal-up" style="--d:0.25s">
-            <i class="fa-solid fa-laptop-code cert-icon" style="color:#00c8ff"></i>
-            <div>
-              <h3>Front-End Development</h3>
-              <p class="cert-meta">IBM SkillsBuild &nbsp;·&nbsp; 2024</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ═══════════ AWARDS ═══════════ -->
-    <section id="awards" class="section content-section">
+    <section id="awards" class="section content-section" aria-label="Awards">
       <div class="container">
-        <div class="section-header">
-          <span class="section-num">06</span>
+        <div class="section-header reveal-up">
+          <span class="section-label">// recognition</span>
           <h2 class="section-title">Awards &amp; Recognition</h2>
         </div>
-        <div class="award-showcase reveal-up">
+        <div class="award-showcase reveal-up" style="--d:0.1s">
           <div class="award-spotlight">
             <div class="award-glow" aria-hidden="true"></div>
             <figure class="award-figure">
@@ -362,7 +422,7 @@
                 data-full-src="assets/ai-transition-award.jpg"
                 alt="AI Transition Award certificate"
                 loading="lazy"
-                width="260"
+                width="220"
               >
               <figcaption>Double-click to zoom</figcaption>
             </figure>
@@ -387,7 +447,60 @@
       </div>
     </section>
 
-  </main>
+    <!-- ═══════════ CONTACT ═══════════ -->
+    <section id="contact" class="section content-section" aria-label="Contact">
+      <div class="container">
+        <div class="section-header reveal-up">
+          <span class="section-label">// say hi</span>
+          <h2 class="section-title">Get In Touch</h2>
+        </div>
+
+        <div class="contact-form-wrap">
+          <form id="contactForm" class="reveal-up" style="--d:0.1s"
+            action="https://formsubmit.co/afzalabd207@gmail.com"
+            method="POST">
+            <input type="hidden" name="_subject" value="Portfolio Contact — SAB">
+            <input type="hidden" name="_next" value="thanks.html">
+            <input type="hidden" name="_captcha" value="false">
+
+            <div class="form-field">
+              <label for="contact-name">name _</label>
+              <input type="text" id="contact-name" name="name" placeholder="your name here" required>
+            </div>
+            <div class="form-field">
+              <label for="contact-email">email _</label>
+              <input type="email" id="contact-email" name="email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-field">
+              <label for="contact-message">message _</label>
+              <textarea id="contact-message" name="message" rows="5" placeholder="what's on your mind?" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit magnetic" id="submitBtn">
+              <i class="fa-solid fa-paper-plane"></i> SEND
+            </button>
+            <div class="form-success" id="formSuccess">
+              message sent! ✓ — i'll get back to you soon.
+            </div>
+          </form>
+
+          <!-- Social links -->
+          <div class="reveal-up" style="--d:0.3s; margin-top:40px; display:flex; gap:16px; flex-wrap:wrap;">
+            <a href="mailto:afzalabd207@gmail.com" class="btn-resume magnetic" style="gap:8px;">
+              <i class="fa-solid fa-envelope"></i> afzalabd207@gmail.com
+            </a>
+            <a href="https://www.linkedin.com/in/abdulbaasit07" target="_blank" rel="noreferrer" class="btn-resume magnetic">
+              <i class="fa-brands fa-linkedin"></i> LinkedIn
+            </a>
+            <a href="https://github.com" target="_blank" rel="noreferrer" class="btn-resume magnetic">
+              <i class="fa-brands fa-github"></i> GitHub
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </div><!-- /scroll-container -->
 
   <!-- ██ FOOTER ██ -->
   <footer class="site-footer">
@@ -408,29 +521,126 @@
     <img id="awardModalImage" class="modal-img" alt="Zoomed award certificate">
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="main.js"></script>
-  <script>
-    /* Guaranteed preloader removal + content reveal fallback */
-    (function() {
-      /* Preloader kill */
-      function killLoader() {
-        var p = document.getElementById('preloader');
-        if (!p || p.classList.contains('hidden')) return;
-        p.classList.add('hidden');
-        setTimeout(function(){ p.style.display = 'none'; }, 700);
-      }
-      setTimeout(killLoader, 1500);
-      ['click','keydown','scroll','touchstart'].forEach(function(e) {
-        window.addEventListener(e, killLoader, { once: true, passive: true });
-      });
+  <!-- Screen reader only utility -->
+  <style>
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+  </style>
 
-      /* Force-reveal all hidden content after 2.5s (belt & suspenders) */
-      setTimeout(function() {
-        var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
-        for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
-      }, 2500);
+  <!-- Init scripts that don't need modules -->
+  <script>
+    // Live clock
+    function updateClock() {
+      const el = document.getElementById('live-clock');
+      if (el) el.textContent = new Date().toLocaleTimeString('en-IN', { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Award modal
+    document.addEventListener('DOMContentLoaded', function() {
+      const thumb = document.querySelector('.award-thumb');
+      const modal = document.getElementById('awardModal');
+      const img = document.getElementById('awardModalImage');
+      const close = document.getElementById('awardModalClose');
+      if (!thumb || !modal) return;
+
+      const open = () => {
+        img.src = thumb.dataset.fullSrc || thumb.src;
+        img.alt = thumb.alt;
+        modal.hidden = false;
+        document.body.style.overflow = 'hidden';
+      };
+      const shut = () => { modal.hidden = true; document.body.style.overflow = ''; };
+
+      thumb.addEventListener('dblclick', open);
+      close.addEventListener('click', shut);
+      modal.addEventListener('click', e => { if (e.target === modal) shut(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) shut(); });
+
+      // Contact form feedback
+      const form = document.getElementById('contactForm');
+      const successEl = document.getElementById('formSuccess');
+      if (form && successEl) {
+        form.addEventListener('submit', function(e) {
+          // Form submits to formsubmit.co. Show success after delay.
+          setTimeout(() => { successEl.classList.add('visible'); }, 300);
+        });
+      }
+
+      // Scroll progress bar
+      const progressBar = document.getElementById('scrollProgress');
+      function updateProgress() {
+        if (!progressBar) return;
+        const scroll = window.scrollY;
+        const max = document.body.scrollHeight - window.innerHeight;
+        progressBar.style.width = (scroll / max * 100) + '%';
+      }
+      window.addEventListener('scroll', updateProgress, { passive: true });
+
+      // Scroll reveal for HTML elements
+      const revealEls = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+      const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            revealObserver.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
+
+      revealEls.forEach(el => revealObserver.observe(el));
+
+      // force-reveal hero immediately
+      document.querySelectorAll('#hero .reveal-up').forEach(el => el.classList.add('visible'));
+    });
+  </script>
+
+  <!-- Role typewriter -->
+  <script>
+    (function() {
+      const roles = [
+        'Angular apps',
+        'TypeScript UIs',
+        'REST API integrations',
+        'AI-assisted solutions',
+      ];
+      const el = document.getElementById('heroRoleText');
+      if (!el) return;
+
+      let roleIdx = 0, charIdx = 0, deleting = false;
+
+      function tick() {
+        const role = roles[roleIdx];
+        if (!deleting) {
+          el.textContent = role.slice(0, charIdx + 1);
+          charIdx++;
+          if (charIdx === role.length) {
+            deleting = true;
+            setTimeout(tick, 1800); // pause at full word
+            return;
+          }
+          setTimeout(tick, 80);
+        } else {
+          el.textContent = role.slice(0, charIdx - 1);
+          charIdx--;
+          if (charIdx === 0) {
+            deleting = false;
+            roleIdx = (roleIdx + 1) % roles.length;
+            setTimeout(tick, 300);
+            return;
+          }
+          setTimeout(tick, 40);
+        }
+      }
+
+      // Start after preloader
+      setTimeout(tick, 1400);
     })();
   </script>
+
 </body>
 </html>
