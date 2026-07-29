@@ -14,8 +14,7 @@
 <body>
 
   <script>
-    document.documentElement.dataset.immersive =
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'anime';
+    document.documentElement.dataset.immersive = 'off';
   </script>
 
   <!-- ██ PRELOADER ██ -->
@@ -437,17 +436,11 @@
     <img id="awardModalImage" class="modal-img" alt="Zoomed award certificate">
   </div>
 
-  <script type="importmap">
-  {
-    "imports": {
-      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/+esm"
-    }
-  }
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="main.js"></script>
-  <script type="module" src="animations.js"></script>
+  <script src="animations.js"></script>
   <script>
     /* Safety fallback preloader + reveal net */
     (function() {
@@ -461,7 +454,7 @@
         var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
         for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
       }
-      setTimeout(forceDismissLoader, 2200);
+      setTimeout(forceDismissLoader, 1500);
       ['click','keydown','scroll','touchstart'].forEach(function(e) {
         window.addEventListener(e, forceDismissLoader, { once: true, passive: true });
       });

@@ -3,16 +3,18 @@
    Anime.js Timelines + Lenis Smooth Scroll + Scroll Reveals
    ═══════════════════════════════════════════════════════════ */
 
-import anime from 'animejs';
-
 // Signal to inline fallback script that animations module is active
 window.__animationsLoaded = true;
 
-document.addEventListener('DOMContentLoaded', initAnimations);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAnimations);
+} else {
+  initAnimations();
+}
 
 function initAnimations() {
   const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isAnimeMode = document.documentElement.dataset.immersive === 'anime' && !isReducedMotion;
+  const hasAnime = typeof window.anime !== 'undefined';
 
   // Setup Lenis Smooth Scroll
   initLenis();
@@ -20,7 +22,10 @@ function initAnimations() {
   // Setup Cursor Glow Tracker
   initCursorGlow();
 
-  if (isAnimeMode) {
+  if (hasAnime && !isReducedMotion) {
+    // Enable anime immersive mode CSS selectors dynamically
+    document.documentElement.dataset.immersive = 'anime';
+
     // 1. Character split for hero title
     splitHeroTitle();
 
@@ -33,7 +38,8 @@ function initAnimations() {
     // 4. Ambient floating orb physics
     initOrbPhysics();
   } else {
-    // Fallback mode for reduced motion or fallback
+    // Fallback mode if anime.js CDN is unavailable or reduced motion is active
+    document.documentElement.dataset.immersive = 'off';
     dismissPreloader();
     revealAllElementsImmediately();
   }
@@ -43,9 +49,9 @@ function initAnimations() {
    1. LENIS SMOOTH SCROLLING
    ───────────────────────────────────────────────────────────── */
 function initLenis() {
-  if (typeof Lenis === 'undefined') return;
+  if (typeof window.Lenis === 'undefined') return;
 
-  const lenis = new Lenis({
+  const lenis = new window.Lenis({
     duration: 1.2,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
@@ -82,7 +88,6 @@ function splitHeroTitle() {
   const heroNameEl = document.querySelector('.hero-name');
   if (!heroNameEl) return;
 
-  // Process text nodes to split characters while preserving <br> elements
   const childNodes = Array.from(heroNameEl.childNodes);
   heroNameEl.innerHTML = '';
 
@@ -111,6 +116,13 @@ function splitHeroTitle() {
    3. INTRO TIMELINE & PRELOADER EXIT
    ───────────────────────────────────────────────────────────── */
 function runIntroTimeline() {
+  const anime = window.anime;
+  if (!anime) {
+    dismissPreloader();
+    revealAllElementsImmediately();
+    return;
+  }
+
   const preloader = document.getElementById('preloader');
   const preloaderRing = document.querySelector('.preloader-ring');
   const preloaderText = document.querySelector('.preloader-text');
@@ -208,6 +220,9 @@ function runIntroTimeline() {
    4. SCROLL REVEALS & STAGGER ANIMATIONS
    ───────────────────────────────────────────────────────────── */
 function initScrollReveals() {
+  const anime = window.anime;
+  if (!anime) return;
+
   const sections = document.querySelectorAll('.content-section');
 
   const observer = new IntersectionObserver(
@@ -338,6 +353,9 @@ function initScrollReveals() {
    5. AMBIENT ORB PHYSICS LOOP
    ───────────────────────────────────────────────────────────── */
 function initOrbPhysics() {
+  const anime = window.anime;
+  if (!anime) return;
+
   anime({
     targets: '.orb-1',
     translateX: [0, 60, -30, 0],
