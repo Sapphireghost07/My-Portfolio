@@ -436,28 +436,27 @@
     <img id="awardModalImage" class="modal-img" alt="Zoomed award certificate">
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="main.js"></script>
-  <script src="animations.js"></script>
   <script>
-    /* Safety fallback preloader + reveal net */
+    /* Preloader & scroll reveal boot */
     (function() {
-      function forceDismissLoader() {
-        if (window.__animationsLoaded) return;
+      function killLoader() {
         var p = document.getElementById('preloader');
-        if (p && !p.classList.contains('hidden')) {
-          p.classList.add('hidden');
-          setTimeout(function(){ p.style.display = 'none'; }, 700);
-        }
+        if (!p || p.classList.contains('hidden')) return;
+        p.classList.add('hidden');
+        setTimeout(function(){ p.style.display = 'none'; }, 700);
+      }
+      setTimeout(killLoader, 700);
+      ['click','keydown','scroll','touchstart'].forEach(function(e) {
+        window.addEventListener(e, killLoader, { once: true, passive: true });
+      });
+
+      setTimeout(function() {
         var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
         for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
-      }
-      setTimeout(forceDismissLoader, 1500);
-      ['click','keydown','scroll','touchstart'].forEach(function(e) {
-        window.addEventListener(e, forceDismissLoader, { once: true, passive: true });
-      });
+      }, 1000);
     })();
   </script>
 </body>
