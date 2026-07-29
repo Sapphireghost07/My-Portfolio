@@ -440,7 +440,7 @@
   <script type="importmap">
   {
     "imports": {
-      "animejs": "https://cdn.jsdelivr.net/npm/animejs@4.5.0/+esm"
+      "animejs": "https://cdn.jsdelivr.net/npm/animejs@3.2.2/+esm"
     }
   }
   </script>
@@ -449,25 +449,22 @@
   <script src="main.js"></script>
   <script type="module" src="animations.js"></script>
   <script>
-    /* Fallback preloader + reveal (skipped when anime.js immersive mode is active) */
+    /* Safety fallback preloader + reveal net */
     (function() {
-      function killLoader() {
-        if (document.documentElement.dataset.immersive === 'anime') return;
+      function forceDismissLoader() {
+        if (window.__animationsLoaded) return;
         var p = document.getElementById('preloader');
-        if (!p || p.classList.contains('hidden')) return;
-        p.classList.add('hidden');
-        setTimeout(function(){ p.style.display = 'none'; }, 700);
-      }
-      setTimeout(killLoader, 2000);
-      ['click','keydown','scroll','touchstart'].forEach(function(e) {
-        window.addEventListener(e, killLoader, { once: true, passive: true });
-      });
-
-      setTimeout(function() {
-        if (document.documentElement.dataset.immersive === 'anime') return;
+        if (p && !p.classList.contains('hidden')) {
+          p.classList.add('hidden');
+          setTimeout(function(){ p.style.display = 'none'; }, 700);
+        }
         var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
         for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
-      }, 2800);
+      }
+      setTimeout(forceDismissLoader, 2200);
+      ['click','keydown','scroll','touchstart'].forEach(function(e) {
+        window.addEventListener(e, forceDismissLoader, { once: true, passive: true });
+      });
     })();
   </script>
 </body>

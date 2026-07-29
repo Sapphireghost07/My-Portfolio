@@ -383,8 +383,10 @@ $$('a[href^="#"]').forEach((a) => {
 // ─────────────────────────────────────────────────────────────
 // 3D TILT ON CARDS
 // ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// 3D TILT ON CARDS
+// ─────────────────────────────────────────────────────────────
 function initCardTilt() {
-  if (document.documentElement.dataset.immersive === 'anime') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if ('ontouchstart' in window) return; // skip on touch
 
@@ -405,7 +407,6 @@ function initCardTilt() {
 // PILL 3D HOVER
 // ─────────────────────────────────────────────────────────────
 function initPillTilt() {
-  if (document.documentElement.dataset.immersive === 'anime') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   $$('.pill').forEach((pill) => {
@@ -448,7 +449,6 @@ function initTyping() {
 // AWARD MODAL
 // ─────────────────────────────────────────────────────────────
 function initAwardModal() {
-  if (document.documentElement.dataset.immersive === 'anime') return;
   const thumb = $('.award-thumb');
   const modal = $('#awardModal');
   const img   = $('#awardModalImage');
@@ -473,7 +473,7 @@ function initAwardModal() {
 // PRELOADER
 // ─────────────────────────────────────────────────────────────
 function hidePreloader() {
-  if (document.documentElement.dataset.immersive === 'anime') return;
+  if (document.documentElement.dataset.immersive === 'anime' && window.__animationsLoaded) return;
   const pre = $('#preloader');
   if (!pre || pre.classList.contains('hidden')) return;
   pre.classList.add('hidden');
