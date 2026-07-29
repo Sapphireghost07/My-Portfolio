@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S Abdul Baasit | Software Developer</title>
-  <meta name="description" content="S Abdul Baasit – Software Developer specialising in Angular, TypeScript and AI-assisted development. Available for work.">
+  <title>S Abdul Baasit | Frontend Developer</title>
+  <meta name="description" content="S Abdul Baasit – Frontend Developer specialising in Angular, TypeScript, full-stack development and AI-powered delivery. Available for work.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -12,6 +12,11 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+  <script>
+    document.documentElement.dataset.immersive =
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'anime';
+  </script>
 
   <!-- ██ PRELOADER ██ -->
   <div id="preloader" class="preloader">
@@ -29,8 +34,22 @@
     </div>
   </div>
 
+  <!-- ██ PARTICLE FIELD ██ -->
+  <canvas id="particles" aria-hidden="true"></canvas>
+
   <!-- ██ THREE.JS CANVAS ██ -->
   <canvas id="bg3d" aria-hidden="true"></canvas>
+
+  <!-- ██ AMBIENT LAYERS ██ -->
+  <div class="ambient-layer" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="noise-overlay"></div>
+  </div>
+
+  <!-- ██ CURSOR GLOW ██ -->
+  <div id="cursorGlow" class="cursor-glow" aria-hidden="true"></div>
 
   <!-- ██ SCROLL PROGRESS ██ -->
   <div id="scrollProgress" class="scroll-progress" aria-hidden="true"></div>
@@ -56,7 +75,7 @@
       <a href="#awards">Awards</a>
     </nav>
     <div class="nav-actions">
-      <a href="assets/Abdul_Baasit_Updated_Resume.pdf" target="_blank" rel="noreferrer" class="btn-resume" id="nav-resume">
+      <a href="assets/Abdul_Resume_3.pdf" target="_blank" rel="noreferrer" class="btn-resume" id="nav-resume">
         <i class="fa-solid fa-file-arrow-down"></i> Resume
       </a>
       <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
@@ -83,14 +102,15 @@
             S&nbsp;Abdul<br>Baasit
           </h1>
           <p class="hero-role reveal-up" style="--d:0.4s">
-            <span class="typing-label">Software Developer — </span>
+            <span class="typing-label">Frontend Developer — </span>
             <span id="typingRole" class="typing-role"
-              data-roles='["Angular & TypeScript","REST API Integration","Responsive UI Engineering","AI-Assisted Development"]'
+              data-roles='["Angular & TypeScript","Full-Stack Development","REST API Integration","AI-Powered Development"]'
             ></span>
           </p>
           <p class="hero-bio reveal-up" style="--d:0.55s">
-            Hands-on experience building enterprise-grade Angular applications at Petro Infotech.
-            Proud recipient of the <strong>AI Transition Award</strong> for integrating AI tools across the SDLC.
+            Hands-on experience building enterprise web applications with Angular and TypeScript, REST API integration,
+            and AI development tools to accelerate delivery across the full stack.
+            Recipient of the <strong>AI Transition Award</strong> at Petro Infotech — practical, fast-learning, and ready to contribute from day one.
           </p>
           <div class="hero-links reveal-up" style="--d:0.7s">
             <a href="mailto:afzalabd207@gmail.com"   class="hero-link" id="h-email"><i class="fa-solid fa-envelope"></i> Email</a>
@@ -114,7 +134,7 @@
         </div>
         <div class="skills-grid reveal-up">
           <div class="skill-group">
-            <h3 class="skill-group-label">Core</h3>
+            <h3 class="skill-group-label">Languages</h3>
             <div class="pill-row">
               <span class="pill"><i class="fa-brands fa-html5" style="color:#e34c26"></i> HTML5</span>
               <span class="pill"><i class="fa-brands fa-css3-alt" style="color:#264de4"></i> CSS3</span>
@@ -124,14 +144,13 @@
             </div>
           </div>
           <div class="skill-group">
-            <h3 class="skill-group-label">Angular Ecosystem</h3>
+            <h3 class="skill-group-label">Frontend</h3>
             <div class="pill-row">
               <span class="pill"><i class="fa-brands fa-angular" style="color:#dd0031"></i> Angular</span>
               <span class="pill"><i class="fa-solid fa-list-check"></i> Reactive Forms</span>
               <span class="pill"><i class="fa-solid fa-route"></i> Angular Router</span>
               <span class="pill"><i class="fa-solid fa-shield-halved"></i> Route Guards</span>
-              <span class="pill"><i class="fa-solid fa-wave-square"></i> RxJS</span>
-              <span class="pill"><i class="fa-solid fa-network-wired"></i> HttpClient</span>
+              <span class="pill"><i class="fa-solid fa-wave-square"></i> RxJS (Basic)</span>
             </div>
           </div>
           <div class="skill-group">
@@ -139,27 +158,42 @@
             <div class="pill-row">
               <span class="pill"><i class="fa-brands fa-bootstrap" style="color:#7952b3"></i> Bootstrap</span>
               <span class="pill"><i class="fa-solid fa-cubes"></i> PrimeNG</span>
+              <span class="pill"><i class="fa-solid fa-bell"></i> SweetAlert2</span>
+              <span class="pill"><i class="fa-solid fa-message"></i> Toastr</span>
               <span class="pill"><i class="fa-solid fa-mobile-screen-button"></i> Responsive Design</span>
             </div>
           </div>
           <div class="skill-group">
-            <h3 class="skill-group-label">Backend / Data</h3>
+            <h3 class="skill-group-label">APIs & Backend</h3>
             <div class="pill-row">
-              <span class="pill"><i class="fa-solid fa-server"></i> REST API Integration</span>
+              <span class="pill"><i class="fa-solid fa-server"></i> REST APIs</span>
+              <span class="pill"><i class="fa-solid fa-network-wired"></i> HttpClient</span>
               <span class="pill"><i class="fa-solid fa-database"></i> JSON Server</span>
               <span class="pill"><i class="fa-solid fa-layer-group"></i> ASP.NET Web API</span>
+              <span class="pill"><i class="fa-solid fa-database"></i> SQL Server</span>
               <span class="pill"><i class="fa-solid fa-database"></i> PL/SQL (Basic)</span>
             </div>
           </div>
           <div class="skill-group">
-            <h3 class="skill-group-label">Tools & Languages</h3>
+            <h3 class="skill-group-label">AI Tools</h3>
+            <div class="pill-row">
+              <span class="pill"><i class="fa-solid fa-wand-magic-sparkles" style="color:#00c8ff"></i> Cursor AI Pro</span>
+              <span class="pill"><i class="fa-solid fa-robot"></i> ChatPRD</span>
+              <span class="pill"><i class="fa-solid fa-code"></i> Codex 5.4</span>
+              <span class="pill"><i class="fa-solid fa-bolt"></i> Antigravity</span>
+              <span class="pill"><i class="fa-solid fa-comment-dots"></i> Claude</span>
+              <span class="pill"><i class="fa-solid fa-comment-dots"></i> ChatGPT</span>
+              <span class="pill"><i class="fa-solid fa-gem"></i> Gemini</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <h3 class="skill-group-label">Dev Tools</h3>
             <div class="pill-row">
               <span class="pill"><i class="fa-brands fa-python" style="color:#3776ab"></i> Python</span>
               <span class="pill"><i class="fa-brands fa-github"></i> GitHub</span>
               <span class="pill"><i class="fa-solid fa-code"></i> VS Code</span>
               <span class="pill"><i class="fa-solid fa-terminal"></i> Node.js CLI</span>
-              <span class="pill"><i class="fa-solid fa-vial-circle-check"></i> Manual QA</span>
-              <span class="pill"><i class="fa-solid fa-wand-magic-sparkles" style="color:#00c8ff"></i> AI-Assisted Dev</span>
+              <span class="pill"><i class="fa-solid fa-laptop-code"></i> PyCharm</span>
             </div>
           </div>
         </div>
@@ -174,23 +208,23 @@
           <h2 class="section-title">Experience</h2>
         </div>
         <div class="timeline">
+          <div class="timeline-progress" aria-hidden="true"></div>
 
           <div class="timeline-item reveal-left">
             <div class="timeline-dot"></div>
             <div class="timeline-card card-3d">
               <div class="tl-head">
                 <div>
-                  <h3 class="tl-title">Software Developer Trainee</h3>
-                  <p class="tl-meta">Petro Infotech &nbsp;·&nbsp; Oct 2025 – Present &nbsp;·&nbsp; Kozhikode (On-site)</p>
+                  <h3 class="tl-title">Junior Software Engineer</h3>
+                  <p class="tl-meta">Petro Infotech &nbsp;·&nbsp; Oct 2025 – Present</p>
                 </div>
                 <span class="badge badge-current">Current</span>
               </div>
               <ul class="tl-list">
-                <li>Developed and enhanced frontend features for <strong>DigiHR</strong> — an HR management platform — building Angular components, services, and routing for employee, payroll, and attendance workflows.</li>
-                <li>Contributed to <strong>NBG DigiHR</strong> (government deployment for Oman), implementing Angular UI logic and integrating ASP.NET Web API endpoints for client-specific requirements.</li>
-                <li>Worked on <strong>IGC-MIS</strong> for Integrated Gas Company (Oman), handling Angular development and API integration, with AI-assisted support for PL/SQL procedures.</li>
-                <li>Applied AI-assisted development tools across SDLC tasks to accelerate implementation and improve test case quality.</li>
-                <li>Received the <strong>AI Transition Award</strong> for notable contributions integrating AI tools into workflows.</li>
+                <li>Develop and maintain enterprise web applications for Petroleum Development Oman (PDO), contributing to <strong>Smart Asset Management System (SAMS)</strong>, PTMS, IGC-MIS, and enterprise dashboards using Angular, TypeScript, ASP.NET Web API, SQL Server, PL/SQL, and REST APIs.</li>
+                <li>Build and enhance business-critical full-stack modules — Angular components, backend APIs, database-driven workflows, REST API integrations, new features, and performance improvements.</li>
+                <li>Collaborate with cross-functional Agile teams of developers, QA engineers, business analysts, and project managers to troubleshoot production issues, resolve defects, participate in code reviews, and deliver scalable enterprise software.</li>
+                <li>Leverage AI-assisted development tools including Cursor AI Pro, Codex, ChatPRD, and Antigravity for development, debugging, testing, and optimization; received the <strong>AI Transition Award</strong> for contributions to AI adoption across the SDLC.</li>
               </ul>
             </div>
           </div>
@@ -226,6 +260,33 @@
         <div class="projects-grid">
 
           <article class="project-card card-3d reveal-up" style="--d:0.05s">
+            <div class="project-icon"><i class="fa-solid fa-users-gear"></i></div>
+            <h3>DigiHR</h3>
+            <p class="project-sub">HR Management Platform</p>
+            <div class="tech-tags">
+              <span>Angular</span><span>TypeScript</span><span>ASP.NET Web API</span><span>REST APIs</span><span>PL/SQL</span>
+            </div>
+            <ul class="project-list">
+              <li>Developed and enhanced frontend features — Angular components, services, and routing for employee management, payroll, and attendance modules with REST API integration.</li>
+              <li>Contributed to <strong>NBG DigiHR</strong>, a government-customised deployment for a public-sector entity in Oman, adapting frontend logic and API integrations for client-specific compliance and workflow requirements.</li>
+              <li>Performed manual QA testing, gaining strong understanding of application workflows and improving functional reliability across modules.</li>
+            </ul>
+          </article>
+
+          <article class="project-card card-3d reveal-up" style="--d:0.15s">
+            <div class="project-icon"><i class="fa-solid fa-chart-line"></i></div>
+            <h3>IGC-MIS</h3>
+            <p class="project-sub">Integrated Gas Company Management System</p>
+            <div class="tech-tags">
+              <span>Angular</span><span>TypeScript</span><span>ASP.NET Web API</span><span>REST APIs</span><span>PL/SQL</span>
+            </div>
+            <ul class="project-list">
+              <li>Contributed to AI-assisted full-stack development across Angular UI, ASP.NET Web API, and PL/SQL database layers to deliver application features.</li>
+              <li>Leveraged AI tools to accelerate development, assist with debugging, and streamline integration of REST APIs and stored procedure–driven workflows.</li>
+            </ul>
+          </article>
+
+          <article class="project-card card-3d reveal-up" style="--d:0.25s">
             <div class="project-icon"><i class="fa-solid fa-briefcase"></i></div>
             <h3>CareerConnect</h3>
             <p class="project-sub">Role-Based Job Board Application</p>
@@ -233,48 +294,8 @@
               <span>Angular</span><span>TypeScript</span><span>PrimeNG</span><span>SweetAlert2</span><span>SCSS</span>
             </div>
             <ul class="project-list">
-              <li>Full job board with separate Job Seeker and Employer experiences using component-driven Angular.</li>
-              <li>Route guards and role-based access control for secure navigation and personalised dashboards.</li>
-              <li>Employer-side CRUD for job listings; job seeker workflows for profile creation and application tracking.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.15s">
-            <div class="project-icon"><i class="fa-solid fa-users-gear"></i></div>
-            <h3>User Management System</h3>
-            <p class="project-sub">Full CRUD with REST API</p>
-            <div class="tech-tags">
-              <span>Angular</span><span>TypeScript</span><span>JSON Server</span><span>HttpClient</span><span>SweetAlert2</span>
-            </div>
-            <ul class="project-list">
-              <li>Full CRUD with Angular Reactive Forms, services, routing, and REST API integration via JSON Server.</li>
-              <li>Input validation, reusable component design, smooth user workflows for creating, updating, deleting records.</li>
-              <li>Toastr notifications, SweetAlert2 confirmations, and Font Awesome iconography.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.25s">
-            <div class="project-icon"><i class="fa-solid fa-globe"></i></div>
-            <h3>Personal Portfolio</h3>
-            <p class="project-sub">3D Immersive Website</p>
-            <div class="tech-tags">
-              <span>HTML5</span><span>CSS3</span><span>JavaScript</span><span>Three.js</span><span>GitHub Pages</span>
-            </div>
-            <ul class="project-list">
-              <li>Designed and deployed a responsive portfolio with dark/light theming, 3D scroll effects, and immersive Three.js background.</li>
-              <li>Hosted on GitHub Pages with optimised assets for consistent performance across devices.</li>
-            </ul>
-          </article>
-
-          <article class="project-card card-3d reveal-up" style="--d:0.35s">
-            <div class="project-icon"><i class="fa-solid fa-cart-shopping"></i></div>
-            <h3>Flipkart Clone</h3>
-            <p class="project-sub">E-Commerce UI</p>
-            <div class="tech-tags">
-              <span>HTML5</span><span>CSS3</span><span>JavaScript</span>
-            </div>
-            <ul class="project-list">
-              <li>Responsive e-commerce UI clone with product listings, category browsing, search, filtering, and cart flow built with modular JavaScript.</li>
+              <li>Built a role-based job board from scratch with Job Seeker and Employer workflows, implementing route guards, personalised dashboards, and end-to-end CRUD functionality.</li>
+              <li>Delivered a clean and interactive user experience using PrimeNG components and SweetAlert2 for alerts, confirmations, and notifications.</li>
             </ul>
           </article>
 
@@ -298,15 +319,9 @@
           </div>
           <div class="edu-card card-3d reveal-up" style="--d:0.15s">
             <i class="fa-solid fa-school edu-icon"></i>
-            <h3>Senior Secondary (CBSE, Class XII)</h3>
-            <p class="edu-meta">Velammal Vidhyashram, Chennai</p>
+            <h3>Higher Secondary (Class XII)</h3>
+            <p class="edu-meta">Velammal Vidhyashram Surapet, Chennai</p>
             <p class="edu-detail">2019 – 2021 &nbsp;·&nbsp; <strong>81.2%</strong></p>
-          </div>
-          <div class="edu-card card-3d reveal-up" style="--d:0.25s">
-            <i class="fa-solid fa-book-open edu-icon"></i>
-            <h3>Secondary (CBSE, Class X)</h3>
-            <p class="edu-meta">TMAES DAV Public School, Hospet</p>
-            <p class="edu-detail">2019 &nbsp;·&nbsp; <strong>85%</strong></p>
           </div>
         </div>
       </div>
@@ -324,14 +339,14 @@
             <i class="fa-solid fa-certificate cert-icon"></i>
             <div>
               <h3>Full Stack Developer</h3>
-              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
+              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; 2025</p>
             </div>
           </div>
           <div class="cert-card card-3d reveal-up" style="--d:0.15s">
             <i class="fa-brands fa-python cert-icon" style="color:#3776ab"></i>
             <div>
-              <h3>Python Certification</h3>
-              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; Jul 2025</p>
+              <h3>Python</h3>
+              <p class="cert-meta">OneRoadmap &nbsp;·&nbsp; 2025</p>
             </div>
           </div>
           <div class="cert-card card-3d reveal-up" style="--d:0.25s">
@@ -339,6 +354,20 @@
             <div>
               <h3>Front-End Development</h3>
               <p class="cert-meta">IBM SkillsBuild &nbsp;·&nbsp; 2024</p>
+            </div>
+          </div>
+          <div class="cert-card card-3d reveal-up" style="--d:0.35s">
+            <i class="fa-brands fa-linkedin cert-icon" style="color:#0a66c2"></i>
+            <div>
+              <h3>Prompt Engineering: How to Talk to AI</h3>
+              <p class="cert-meta">LinkedIn &nbsp;·&nbsp; 2023</p>
+            </div>
+          </div>
+          <div class="cert-card card-3d reveal-up" style="--d:0.45s">
+            <i class="fa-brands fa-linkedin cert-icon" style="color:#0a66c2"></i>
+            <div>
+              <h3>Get Ready for Generative AI</h3>
+              <p class="cert-meta">LinkedIn &nbsp;·&nbsp; 2023</p>
             </div>
           </div>
         </div>
@@ -373,7 +402,7 @@
               </div>
               <h3 class="award-title">AI Transition Award</h3>
               <p class="award-desc">
-                Recognised for effectively integrating AI-assisted development tools into development and testing workflows,
+                Recognised for integrating AI development tools (ChatPRD, Cursor AI Pro, Codex 5.4) into live development and testing workflows,
                 contributing to the organisation's AI adoption roadmap across the SDLC.
               </p>
               <div class="award-tags">
@@ -396,7 +425,7 @@
       <div class="footer-links">
         <a href="mailto:afzalabd207@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
         <a href="https://www.linkedin.com/in/abdulbaasit07" target="_blank" rel="noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="https://github.com/sapphireghost07" target="_blank" rel="noreferrer" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
       </div>
       <span class="footer-tag">Available for work opportunities</span>
     </div>
@@ -408,28 +437,37 @@
     <img id="awardModalImage" class="modal-img" alt="Zoomed award certificate">
   </div>
 
+  <script type="importmap">
+  {
+    "imports": {
+      "animejs": "https://cdn.jsdelivr.net/npm/animejs@4.5.0/+esm"
+    }
+  }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="main.js"></script>
+  <script type="module" src="animations.js"></script>
   <script>
-    /* Guaranteed preloader removal + content reveal fallback */
+    /* Fallback preloader + reveal (skipped when anime.js immersive mode is active) */
     (function() {
-      /* Preloader kill */
       function killLoader() {
+        if (document.documentElement.dataset.immersive === 'anime') return;
         var p = document.getElementById('preloader');
         if (!p || p.classList.contains('hidden')) return;
         p.classList.add('hidden');
         setTimeout(function(){ p.style.display = 'none'; }, 700);
       }
-      setTimeout(killLoader, 1500);
+      setTimeout(killLoader, 2000);
       ['click','keydown','scroll','touchstart'].forEach(function(e) {
         window.addEventListener(e, killLoader, { once: true, passive: true });
       });
 
-      /* Force-reveal all hidden content after 2.5s (belt & suspenders) */
       setTimeout(function() {
+        if (document.documentElement.dataset.immersive === 'anime') return;
         var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
         for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
-      }, 2500);
+      }, 2800);
     })();
   </script>
 </body>

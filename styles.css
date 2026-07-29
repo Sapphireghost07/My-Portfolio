@@ -56,7 +56,8 @@ img { display: block; max-width: 100%; }
 strong { color: var(--c-text); }
 
 /* ── CANVAS ───────────────────────────────────────────── */
-#bg3d {
+#bg3d,
+#particles {
   position: fixed;
   inset: 0;
   width: 100vw;
@@ -64,6 +65,10 @@ strong { color: var(--c-text); }
   z-index: 0;
   pointer-events: none;
 }
+
+#particles { z-index: 1; opacity: 0.85; }
+
+body.light #particles { opacity: 0.55; }
 
 /* ── PRELOADER ────────────────────────────────────────── */
 .preloader {
@@ -190,6 +195,17 @@ strong { color: var(--c-text); }
 body.light .top-nav {
   background: rgba(240,248,255,0.8);
   border-bottom-color: rgba(2,132,199,0.12);
+}
+
+.top-nav.nav-scrolled {
+  background: rgba(3, 7, 26, 0.88);
+  box-shadow: 0 8px 32px rgba(0, 0, 30, 0.45);
+  border-bottom-color: rgba(0, 200, 255, 0.15);
+}
+
+body.light .top-nav.nav-scrolled {
+  background: rgba(240, 248, 255, 0.95);
+  box-shadow: 0 8px 28px rgba(2, 8, 23, 0.1);
 }
 
 .nav-brand {
@@ -340,10 +356,11 @@ main {
   position: absolute;
   bottom: -10px;
   left: 0;
-  width: 48px;
+  width: var(--line-w, 48px);
   height: 3px;
   background: linear-gradient(90deg, var(--c-accent), var(--c-accent2));
   border-radius: 2px;
+  transition: width 0.1s linear;
 }
 
 /* ── CONTENT SECTIONS WRAPPER ─────────────────────────── */
@@ -478,6 +495,16 @@ main {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+.hero-name.shimmer-active {
+  background-size: 220% auto;
+  animation: nameShimmer 7s ease-in-out infinite;
+}
+
+@keyframes nameShimmer {
+  0%, 100% { background-position: 0% center; }
+  50%       { background-position: 100% center; }
 }
 
 .hero-role {
@@ -648,6 +675,18 @@ main {
   gap: 32px;
 }
 
+.timeline-progress {
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform-origin: top center;
+  background: linear-gradient(180deg, var(--c-accent), var(--c-accent2), transparent);
+  opacity: 0;
+  z-index: 0;
+}
+
 .timeline::before {
   content: '';
   position: absolute;
@@ -655,7 +694,7 @@ main {
   top: 0; bottom: 0;
   width: 2px;
   background: linear-gradient(180deg, var(--c-accent), var(--c-accent2), transparent);
-  opacity: 0.3;
+  opacity: 0.12;
 }
 
 .timeline-item {
@@ -1225,3 +1264,166 @@ body.light .site-footer {
 ::-webkit-scrollbar-track { background: var(--c-bg); }
 ::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.3); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,200,255,0.55); }
+
+/* ── IMMERSIVE LAYERS (anime.js) ──────────────────────── */
+.ambient-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  will-change: transform;
+}
+
+.orb-1 {
+  width: 420px;
+  height: 420px;
+  top: 10%;
+  left: -8%;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.5), transparent 70%);
+}
+
+.orb-2 {
+  width: 360px;
+  height: 360px;
+  top: 55%;
+  right: -6%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.45), transparent 70%);
+}
+
+.orb-3 {
+  width: 280px;
+  height: 280px;
+  bottom: 8%;
+  left: 35%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.35), transparent 70%);
+}
+
+body.light .orb { opacity: 0.22; }
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+body.light .noise-overlay { opacity: 0.03; }
+
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9990;
+  opacity: 0;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.12) 0%, rgba(139, 92, 246, 0.06) 40%, transparent 70%);
+  mix-blend-mode: screen;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+
+.cursor-glow.active { opacity: 1; }
+
+body.light .cursor-glow {
+  mix-blend-mode: multiply;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, transparent 70%);
+}
+
+/* Hero char split (anime.js entrance) */
+html[data-immersive="anime"] .hero-char {
+  display: inline-block;
+  opacity: 0;
+  transform-origin: 50% 100%;
+}
+
+html[data-immersive="anime"] .hero-photo-wrap {
+  opacity: 0;
+}
+
+html[data-immersive="anime"] #hero .hero-sub,
+html[data-immersive="anime"] #hero .hero-role,
+html[data-immersive="anime"] #hero .hero-bio,
+html[data-immersive="anime"] #hero .hero-links,
+html[data-immersive="anime"] .scroll-down-hint {
+  opacity: 0;
+}
+
+/* Stagger targets start hidden */
+html[data-immersive="anime"] .pill,
+html[data-immersive="anime"] .edu-card,
+html[data-immersive="anime"] .cert-card,
+html[data-immersive="anime"] .project-card {
+  opacity: 0;
+}
+
+html[data-immersive="anime"] .tech-tags span {
+  opacity: 0;
+}
+
+html[data-immersive="anime"] .site-footer {
+  opacity: 0;
+}
+
+html[data-immersive="anime"] .scroll-down-hint {
+  animation: none;
+}
+
+html[data-immersive="anime"] .blink-dot {
+  animation: none;
+}
+
+html[data-immersive="anime"] .nav-brand {
+  opacity: 0;
+}
+
+html[data-immersive="anime"] .timeline-progress {
+  transform: scaleY(0);
+}
+
+html[data-immersive="anime"] .reveal-up,
+html[data-immersive="anime"] .reveal-left,
+html[data-immersive="anime"] .reveal-right {
+  transition: none;
+}
+
+html[data-immersive="anime"] .scroll-progress {
+  box-shadow: 0 0 12px rgba(0, 200, 255, 0.4);
+}
+
+html[data-immersive="anime"] .project-card {
+  transform-style: preserve-3d;
+  perspective: 900px;
+}
+
+html[data-immersive="anime"] .card-3d {
+  transition: box-shadow 0.3s ease;
+}
+
+html[data-immersive="anime"] .pill {
+  transform-style: preserve-3d;
+}
+
+html[data-immersive="off"] #particles {
+  display: none;
+}
+
+@media (hover: none), (max-width: 960px) {
+  .cursor-glow { display: none; }
+}
+
+html[data-immersive="off"] .cursor-glow,
+html[data-immersive="off"] .ambient-layer .orb {
+  display: none;
+}

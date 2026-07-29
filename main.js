@@ -322,6 +322,7 @@ window.addEventListener('scroll', onScroll, { passive: true });
 const revealEls = $$('.reveal-up, .reveal-left, .reveal-right');
 
 const revealObserver = new IntersectionObserver((entries) => {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   entries.forEach((e) => {
     if (e.isIntersecting) {
       e.target.classList.add('visible');
@@ -338,6 +339,7 @@ function revealAll() {
 
 // Force hero elements visible immediately (they're in viewport on load)
 function revealHero() {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   $$('#hero .reveal-up, #hero .reveal-left, #hero .reveal-right').forEach((el) => {
     el.classList.add('visible');
   });
@@ -370,6 +372,7 @@ window.addEventListener('resize', () => {
 // ─────────────────────────────────────────────────────────────
 $$('a[href^="#"]').forEach((a) => {
   a.addEventListener('click', (e) => {
+    if (typeof Lenis !== 'undefined' && document.documentElement.dataset.immersive === 'anime') return;
     const target = $(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
@@ -381,6 +384,7 @@ $$('a[href^="#"]').forEach((a) => {
 // 3D TILT ON CARDS
 // ─────────────────────────────────────────────────────────────
 function initCardTilt() {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if ('ontouchstart' in window) return; // skip on touch
 
@@ -401,6 +405,7 @@ function initCardTilt() {
 // PILL 3D HOVER
 // ─────────────────────────────────────────────────────────────
 function initPillTilt() {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   $$('.pill').forEach((pill) => {
@@ -443,6 +448,7 @@ function initTyping() {
 // AWARD MODAL
 // ─────────────────────────────────────────────────────────────
 function initAwardModal() {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   const thumb = $('.award-thumb');
   const modal = $('#awardModal');
   const img   = $('#awardModalImage');
@@ -467,10 +473,10 @@ function initAwardModal() {
 // PRELOADER
 // ─────────────────────────────────────────────────────────────
 function hidePreloader() {
+  if (document.documentElement.dataset.immersive === 'anime') return;
   const pre = $('#preloader');
   if (!pre || pre.classList.contains('hidden')) return;
   pre.classList.add('hidden');
-  // Safety: fully remove it from layout after transition
   setTimeout(() => { if (pre) pre.style.display = 'none'; }, 700);
 }
 
