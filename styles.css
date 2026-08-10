@@ -405,56 +405,133 @@ main {
 }
 
 .hero-inner {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(260px, 38%) 1fr;
   align-items: center;
-  gap: 52px;
-  flex-wrap: wrap;
+  gap: clamp(32px, 5vw, 64px);
 }
 
-/* Profile photo */
+/* Profile photo — 3D PNG bust cutout pop-out pedestal */
 .hero-photo-wrap {
-  flex-shrink: 0;
   position: relative;
-  width: 160px;
-  height: 160px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  align-self: center;
+  perspective: 1000px;
 }
 
-.hero-photo-wrap::before {
-  content: '';
+.hero-photo-stage {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.hero-photo-pedestal {
   position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  background: conic-gradient(var(--c-accent) 0deg, var(--c-accent2) 120deg, var(--c-accent3) 240deg, var(--c-accent) 360deg);
-  animation: spinRing 5s linear infinite;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 82%;
+  height: 82%;
+  border-radius: 50% 50% 32px 32px;
+  background: radial-gradient(circle at 50% 30%, rgba(13, 30, 65, 0.75) 0%, rgba(4, 10, 28, 0.9) 100%);
+  border: 1px solid rgba(0, 200, 255, 0.25);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 30, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
   z-index: 0;
+}
+
+body.light .hero-photo-pedestal {
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.85) 0%, rgba(224, 242, 254, 0.95) 100%);
+  border-color: rgba(2, 132, 199, 0.3);
+  box-shadow: 0 18px 45px rgba(2, 8, 23, 0.12);
+}
+
+.hero-photo-ring {
+  position: absolute;
+  bottom: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 86%;
+  height: 86%;
+  border-radius: 50%;
+  border: 2px dashed rgba(0, 200, 255, 0.35);
+  animation: spinRing 25s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body.light .hero-photo-ring {
+  border-color: rgba(2, 132, 199, 0.35);
+}
+
+.hero-photo-glow {
+  position: absolute;
+  inset: 5% 0 15%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.35) 0%, transparent 65%),
+    radial-gradient(circle at 30% 70%, rgba(139, 92, 246, 0.35) 0%, transparent 60%);
+  filter: blur(35px);
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+  animation: heroGlowPulse 4s ease-in-out infinite;
 }
 
 .hero-photo-wrap::after {
   content: '';
   position: absolute;
-  inset: -16px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--c-glow) 0%, transparent 70%);
-  filter: blur(16px);
-  animation: glowPulse 3s ease-in-out infinite;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 76%;
+  height: 16px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 72%);
+  filter: blur(6px);
+  opacity: 0.65;
   z-index: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s var(--ease-out);
 }
 
 .hero-photo {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  display: block;
   position: relative;
   z-index: 1;
-  border: 3px solid var(--c-bg);
-  transition: transform 0.5s ease;
+  object-fit: contain;
+  object-position: bottom center;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 18px 36px rgba(0, 0, 0, 0.55));
+  animation: heroPhotoFloat 6s ease-in-out infinite;
+  transition: transform 0.4s var(--ease-out), filter 0.4s ease;
+  transform: translateZ(25px);
 }
 
-.hero-photo-wrap:hover .hero-photo {
-  transform: scale(1.05) rotateY(8deg);
+.hero-photo-stage:hover .hero-photo {
+  animation-play-state: paused;
+  transform: translateZ(35px) scale(1.03);
+  filter:
+    drop-shadow(0 26px 48px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 28px rgba(0, 200, 255, 0.45));
+}
+
+.hero-photo-wrap:hover::after {
+  opacity: 0.85;
+  transform: translateX(-50%) scaleX(1.08);
 }
 
 /* Hero content */
@@ -1213,21 +1290,64 @@ body.light .site-footer {
   to   { transform: scale(1);    opacity: 1; }
 }
 
+@keyframes heroPhotoFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-8px) scale(1.006); }
+}
+
+@keyframes heroGlowPulse {
+  0%, 100% { opacity: 0.42; transform: scale(1); }
+  50%       { opacity: 0.62; transform: scale(1.06); }
+}
+
 /* ── RESPONSIVE ───────────────────────────────────────── */
+body.light .hero-photo {
+  filter: drop-shadow(0 18px 36px rgba(2, 8, 23, 0.2));
+}
+
+body.light .hero-photo-glow {
+  opacity: 0.35;
+}
+
+body.light .hero-photo-wrap::after {
+  background: radial-gradient(ellipse, rgba(2, 8, 23, 0.22) 0%, transparent 72%);
+}
+
+body.light .hero-photo-wrap:hover .hero-photo {
+  filter:
+    drop-shadow(0 28px 44px rgba(2, 8, 23, 0.26))
+    drop-shadow(0 0 28px var(--c-glow))
+    drop-shadow(0 0 40px var(--c-glow2));
+}
+
 @media (max-width: 960px) {
   .side-dots { display: none; }
   .nav-links { display: none; }
+  .hero-inner {
+    grid-template-columns: minmax(200px, 260px) 1fr;
+    gap: 40px;
+  }
 }
 
 @media (max-width: 640px) {
   .top-nav { padding: 0 18px; height: 56px; }
   .btn-resume span { display: none; }
-  .hero-inner { flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+  .hero-inner {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    gap: 32px;
+  }
   .hero-content { align-items: center; }
   .hero-bio { text-align: center; }
   .hero-links { justify-content: center; }
-  .hero-photo-wrap { width: 130px; height: 130px; }
-  .hero-photo { width: 130px; height: 130px; }
+  .hero-photo-wrap {
+    align-self: center;
+    width: min(280px, 72vw);
+    margin-bottom: 0;
+  }
+  .hero-photo-stage,
+  .hero-photo { max-width: 100%; }
   .section-title { font-size: 1.7rem; }
   .timeline::before { left: 10px; }
   .timeline-item { grid-template-columns: 24px 1fr; gap: 12px; }
@@ -1255,6 +1375,15 @@ body.light .site-footer {
   }
   .reveal-up, .reveal-left, .reveal-right {
     opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-photo {
+    animation: none !important;
+  }
+  .hero-photo-glow {
+    animation: none !important;
+  }
+  .hero-photo-stage {
     transform: none !important;
   }
 }

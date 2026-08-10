@@ -366,14 +366,46 @@ window.addEventListener('resize', () => {
 }, { passive: true });
 
 // ─────────────────────────────────────────────────────────────
+// LENIS SMOOTH SCROLLING
+// ─────────────────────────────────────────────────────────────
+let lenisInstance = null;
+
+function initLenis() {
+  if (typeof Lenis === 'undefined') return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  lenisInstance = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 1.5,
+  });
+
+  function raf(time) {
+    lenisInstance.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+}
+
+// ─────────────────────────────────────────────────────────────
 // SMOOTH ANCHOR SCROLL (side/top nav)
 // ─────────────────────────────────────────────────────────────
 $$('a[href^="#"]').forEach((a) => {
   a.addEventListener('click', (e) => {
-    const target = $(a.getAttribute('href'));
+    const href = a.getAttribute('href');
+    if (!href || href === '#') return;
+    const target = $(href);
     if (!target) return;
     e.preventDefault();
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (lenisInstance) {
+      lenisInstance.scrollTo(target, { duration: 1.2 });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   });
 });
 
@@ -467,6 +499,32 @@ function initAwardModal() {
 }
 
 // ─────────────────────────────────────────────────────────────
+// HERO PHOTO — cutout parallax + idle motion hook
+// ─────────────────────────────────────────────────────────────
+let heroPhotoStage = null;
+let heroPhotoParallaxX = 0;
+let heroPhotoParallaxY = 0;
+
+function initHeroPhoto() {
+  heroPhotoStage = $('.hero-photo-stage');
+  if (!heroPhotoStage) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia('(max-width: 640px)').matches) return;
+
+  const maxShift = 14;
+
+  function tickHeroPhoto() {
+    heroPhotoParallaxX = lerp(heroPhotoParallaxX, mouseNX * maxShift, 0.07);
+    heroPhotoParallaxY = lerp(heroPhotoParallaxY, mouseNY * maxShift * 0.55, 0.07);
+    heroPhotoStage.style.setProperty('--px', `${heroPhotoParallaxX.toFixed(2)}px`);
+    heroPhotoStage.style.setProperty('--py', `${heroPhotoParallaxY.toFixed(2)}px`);
+    requestAnimationFrame(tickHeroPhoto);
+  }
+
+  tickHeroPhoto();
+}
+
+// ─────────────────────────────────────────────────────────────
 // PRELOADER
 // ─────────────────────────────────────────────────────────────
 function hidePreloader() {
@@ -494,8 +552,10 @@ function boot() {
     buildThreeScene();
   }
 
+  initLenis();
   initCardTilt();
   initPillTilt();
+  initHeroPhoto();
   initTyping();
   initAwardModal();
   onScroll();
