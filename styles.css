@@ -7,15 +7,15 @@
 :root {
   --c-bg:       #03071a;
   --c-bg2:      #060d24;
-  --c-accent:   #00c8ff;
-  --c-accent2:  #8b5cf6;
+  --c-accent:   #00e5ff;
+  --c-accent2:  #a78bfa;
   --c-accent3:  #10b981;
-  --c-text:     #e8f4fd;
-  --c-muted:    #8fa8c8;
-  --c-card:     rgba(8, 18, 40, 0.75);
-  --c-border:   rgba(0, 200, 255, 0.15);
-  --c-glow:     rgba(0, 200, 255, 0.35);
-  --c-glow2:    rgba(139, 92, 246, 0.35);
+  --c-text:     #ffffff;
+  --c-muted:    #b8d2f0;
+  --c-card:     rgba(8, 18, 40, 0.78);
+  --c-border:   rgba(0, 229, 255, 0.18);
+  --c-glow:     rgba(0, 229, 255, 0.38);
+  --c-glow2:    rgba(167, 139, 250, 0.38);
   --font:       'Space Grotesk', sans-serif;
   --mono:       'Space Mono', monospace;
   --ease-out:   cubic-bezier(0.23, 1, 0.32, 1);
@@ -26,14 +26,14 @@ body.light {
   --c-bg:      #e8f4fd;
   --c-bg2:     #f0f8ff;
   --c-accent:  #0284c7;
-  --c-accent2: #7c3aed;
-  --c-accent3: #059669;
-  --c-text:    #0a1628;
-  --c-muted:   #3b5278;
-  --c-card:    rgba(255,255,255,0.82);
-  --c-border:  rgba(2,132,199,0.2);
-  --c-glow:    rgba(2,132,199,0.25);
-  --c-glow2:   rgba(124,58,237,0.2);
+  --c-accent2: #6d28d9;
+  --c-accent3: #047857;
+  --c-text:    #020617;
+  --c-muted:   #1e293b;
+  --c-card:    rgba(255,255,255,0.85);
+  --c-border:  rgba(2,132,199,0.22);
+  --c-glow:    rgba(2,132,199,0.28);
+  --c-glow2:   rgba(109,40,217,0.22);
   --shadow:    0 20px 60px rgba(2,8,23,0.12);
 }
 
@@ -413,7 +413,7 @@ main {
   gap: clamp(32px, 5vw, 64px);
 }
 
-/* Profile photo — Clean PNG cutout without frames or jumping animations */
+/* Profile photo — Clean PNG cutout with open spinning background energy ring */
 .hero-photo-wrap {
   position: relative;
   display: flex;
@@ -421,7 +421,7 @@ main {
   justify-content: center;
   align-self: center;
   width: 100%;
-  max-width: 380px;
+  max-width: 310px;
   margin: 0 auto;
 }
 
@@ -433,14 +433,32 @@ main {
   justify-content: center;
 }
 
+.hero-photo-ring-bg {
+  position: absolute;
+  bottom: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  height: 88%;
+  border-radius: 50%;
+  border: 2px dashed rgba(0, 229, 255, 0.32);
+  animation: spinRing 24s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+body.light .hero-photo-ring-bg {
+  border-color: rgba(2, 132, 199, 0.32);
+}
+
 .hero-photo-glow {
   position: absolute;
   inset: 0 0 15%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(0, 200, 255, 0.35) 0%, transparent 65%),
-    radial-gradient(circle at 35% 65%, rgba(139, 92, 246, 0.3) 0%, transparent 60%);
+    radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.38) 0%, transparent 65%),
+    radial-gradient(circle at 35% 65%, rgba(167, 139, 250, 0.32) 0%, transparent 60%);
   filter: blur(38px);
-  opacity: 0.6;
+  opacity: 0.65;
   z-index: 0;
   pointer-events: none;
   animation: heroGlowPulse 4s ease-in-out infinite;
@@ -464,7 +482,7 @@ main {
 
 .hero-photo {
   width: 100%;
-  max-width: 380px;
+  max-width: 310px;
   height: auto;
   display: block;
   position: relative;
