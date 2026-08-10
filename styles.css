@@ -464,7 +464,7 @@ main {
   justify-content: center;
   align-self: center;
   width: 100%;
-  max-width: 310px;
+  max-width: 280px;
   margin: 0 auto;
 }
 
@@ -525,7 +525,7 @@ body.light .hero-photo-ring-bg {
 
 .hero-photo {
   width: 100%;
-  max-width: 310px;
+  max-width: 280px;
   height: auto;
   display: block;
   position: relative;
@@ -1433,7 +1433,7 @@ body.light .mobile-menu {
   .hero-links { justify-content: center; }
   .hero-photo-wrap {
     align-self: center;
-    width: min(280px, 72vw);
+    width: min(240px, 68vw);
     margin-bottom: 0;
   }
   .hero-photo-stage,

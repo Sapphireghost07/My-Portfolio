@@ -448,13 +448,22 @@ function onScroll() {
     else d.removeAttribute('aria-current');
   });
 
-  revealAll();
-
   const nav = $('#topNav');
   if (nav) nav.classList.toggle('nav-scrolled', scrollY > 40);
 }
 
-window.addEventListener('scroll', onScroll, { passive: true });
+let scrollTicking = false;
+
+function scheduleScrollUpdate() {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    scrollTicking = false;
+    onScroll();
+  });
+}
+
+window.addEventListener('scroll', scheduleScrollUpdate, { passive: true });
 
 // ─────────────────────────────────────────────────────────────
 // SCROLL REVEAL
@@ -514,13 +523,13 @@ function initLenis() {
   if (prefersReducedMotion()) return;
 
   lenisInstance = new Lenis({
-    duration: 1.2,
+    duration: isSmallScreen ? 0.9 : 0.72,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
-    wheelMultiplier: 1,
-    touchMultiplier: 1.5,
+    wheelMultiplier: isSmallScreen ? 1 : 1.08,
+    touchMultiplier: 1.1,
   });
 
   function raf(time) {
@@ -528,6 +537,8 @@ function initLenis() {
     requestAnimationFrame(raf);
   }
   requestAnimationFrame(raf);
+
+  lenisInstance.on('scroll', scheduleScrollUpdate);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -661,11 +672,12 @@ function hidePreloader() {
 // BOOT
 // ─────────────────────────────────────────────────────────────
 function boot() {
-  setTimeout(hidePreloader, 700);
+  const preloaderDelay = isTouch || isSmallScreen ? 180 : 320;
+  setTimeout(hidePreloader, preloaderDelay);
   ['click', 'keydown', 'scroll', 'touchstart'].forEach((e) => {
     window.addEventListener(e, hidePreloader, { once: true, passive: true });
   });
-  window.addEventListener('load', hidePreloader);
+  window.addEventListener('load', hidePreloader, { once: true });
 
   revealHero();
   revealAll();
