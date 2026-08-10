@@ -502,26 +502,8 @@ function initAwardModal() {
 // HERO PHOTO — cutout parallax + idle motion hook
 // ─────────────────────────────────────────────────────────────
 let heroPhotoStage = null;
-let heroPhotoParallaxX = 0;
-let heroPhotoParallaxY = 0;
-
 function initHeroPhoto() {
-  heroPhotoStage = $('.hero-photo-stage');
-  if (!heroPhotoStage) return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if (window.matchMedia('(max-width: 640px)').matches) return;
-
-  const maxShift = 14;
-
-  function tickHeroPhoto() {
-    heroPhotoParallaxX = lerp(heroPhotoParallaxX, mouseNX * maxShift, 0.07);
-    heroPhotoParallaxY = lerp(heroPhotoParallaxY, mouseNY * maxShift * 0.55, 0.07);
-    heroPhotoStage.style.setProperty('--px', `${heroPhotoParallaxX.toFixed(2)}px`);
-    heroPhotoStage.style.setProperty('--py', `${heroPhotoParallaxY.toFixed(2)}px`);
-    requestAnimationFrame(tickHeroPhoto);
-  }
-
-  tickHeroPhoto();
+  // Photo is kept stationary without vertical or horizontal movement
 }
 
 // ─────────────────────────────────────────────────────────────
