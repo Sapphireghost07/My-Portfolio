@@ -12,13 +12,18 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => [...document.querySelectorAll(s)];
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const prefersReducedMotion = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isTouch = 'ontouchstart' in window;
+const isSmallScreen = window.innerWidth < 720;
 
-// Three.js state (declared early so theme code can reference threeReady)
+// Three.js state
 let renderer, scene, camera, clock;
 let starsPoints, nebulaPoints, tubePoints;
 let shape1, shape2, shape3, shape4;
 let threeReady = false;
 let rafId;
+let tabHidden = false;
 
 // ─────────────────────────────────────────────────────────────
 // YEAR
@@ -36,10 +41,13 @@ const themeBtn = $('#themeToggle');
 const applyTheme = (mode) => {
   bodyEl.classList.toggle('light', mode === 'light');
   localStorage.setItem(THEME_KEY, mode);
+  if (themeBtn) {
+    themeBtn.setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
+    themeBtn.setAttribute('aria-label', mode === 'light' ? 'Switch to dark theme' : 'Switch to light theme');
+  }
   if (threeReady) updateSceneColors();
 };
 
-// One-time migration: clear stale theme from old portfolio version
 const MIGRATION_KEY = 'sab-v2-migrated';
 if (!localStorage.getItem(MIGRATION_KEY)) {
   localStorage.removeItem(THEME_KEY);
@@ -47,12 +55,7 @@ if (!localStorage.getItem(MIGRATION_KEY)) {
 }
 
 const savedTheme = localStorage.getItem(THEME_KEY);
-if (savedTheme) {
-  applyTheme(savedTheme);
-} else {
-  // Default: dark theme for full 3D immersion
-  applyTheme('dark');
-}
+applyTheme(savedTheme || 'dark');
 
 if (themeBtn) {
   themeBtn.addEventListener('click', () => {
@@ -63,8 +66,6 @@ if (themeBtn) {
 // ─────────────────────────────────────────────────────────────
 // THREE.JS — GALAXY SCENE
 // ─────────────────────────────────────────────────────────────
-
-// Scroll-tracked camera targets
 let targetCamZ  = 4;
 let targetCamX  = 0;
 let targetCamY  = 0;
@@ -72,7 +73,6 @@ let currentCamZ = 4;
 let currentCamX = 0;
 let currentCamY = 0;
 
-// Mouse
 let mouseNX = 0, mouseNY = 0;
 
 const SECTION_CAM_Z = {
@@ -105,30 +105,28 @@ function getSceneColors() {
 function buildThreeScene() {
   const canvas = $('#bg3d');
   if (!canvas || typeof THREE === 'undefined') return;
+  // Respect reduced-motion: skip the heavy flying-camera galaxy entirely.
+  if (prefersReducedMotion()) return;
 
   const W = window.innerWidth;
   const H = window.innerHeight;
   const colors = getSceneColors();
 
-  // Renderer
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isSmallScreen ? 1.5 : 2));
   renderer.setSize(W, H);
   renderer.setClearColor(colors.bg, 1);
 
-  // Scene
   scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(colors.fog, 0.018);
 
-  // Camera — starts at z=4, will fly backward as user scrolls
   camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 200);
   camera.position.set(0, 0, 4);
 
   clock = new THREE.Clock();
 
-  // ── STAR TUNNEL ─────────────────────────────────────
-  // Arrange 4000 stars in a long cylindrical tunnel from z=+10 to z=-80
-  const STAR_COUNT = 4000;
+  // Fewer stars on small/touch screens to keep things smooth.
+  const STAR_COUNT = isSmallScreen ? 1600 : 4000;
   const posArr  = new Float32Array(STAR_COUNT * 3);
   const colArr  = new Float32Array(STAR_COUNT * 3);
   const c1 = new THREE.Color(colors.stars);
@@ -137,12 +135,11 @@ function buildThreeScene() {
   const pal = [c1, c2, c3];
 
   for (let i = 0; i < STAR_COUNT; i++) {
-    // Cylinder distribution
     const angle = Math.random() * Math.PI * 2;
     const radius = 5 + Math.random() * 22;
     posArr[i * 3]     = Math.cos(angle) * radius;
     posArr[i * 3 + 1] = Math.sin(angle) * radius + (Math.random() - 0.5) * 8;
-    posArr[i * 3 + 2] = 8 - Math.random() * 90; // stretch along Z
+    posArr[i * 3 + 2] = 8 - Math.random() * 90;
 
     const c = pal[Math.floor(Math.random() * pal.length)];
     colArr[i * 3]     = c.r;
@@ -165,8 +162,7 @@ function buildThreeScene() {
   starsPoints = new THREE.Points(starGeo, starMat);
   scene.add(starsPoints);
 
-  // ── DISTANT NEBULA CLOUD ─────────────────────────────
-  const NEB_COUNT = 800;
+  const NEB_COUNT = isSmallScreen ? 350 : 800;
   const nPos = new Float32Array(NEB_COUNT * 3);
   const nCol = new Float32Array(NEB_COUNT * 3);
   const nc1 = new THREE.Color(colors.nebula);
@@ -195,9 +191,6 @@ function buildThreeScene() {
   }));
   scene.add(nebulaPoints);
 
-  // ── WIREFRAME SHAPES along the Z tunnel ──────────────
-  // Each shape sits at a different Z depth, at the camera waypoints
-
   const mkWire = (geo, color, x, y, z, name) => {
     const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
       color,
@@ -220,7 +213,6 @@ function buildThreeScene() {
   ticker();
 }
 
-// ── UPDATE when theme changes ──────────────────────────────
 function updateSceneColors() {
   if (!scene) return;
   const colors = getSceneColors();
@@ -242,14 +234,12 @@ function updateSceneColors() {
   });
 }
 
-// ── ANIMATION LOOP ─────────────────────────────────────────
 function ticker() {
   rafId = requestAnimationFrame(ticker);
-  if (!renderer || !scene || !camera) return;
+  if (!renderer || !scene || !camera || tabHidden) return;
 
   const t = clock.getElapsedTime();
 
-  // Smooth camera Z (flying-through effect)
   currentCamZ = lerp(currentCamZ, targetCamZ, 0.04);
   currentCamX = lerp(currentCamX, targetCamX + mouseNX * 2.5, 0.04);
   currentCamY = lerp(currentCamY, targetCamY + mouseNY * 1.5, 0.04);
@@ -257,18 +247,170 @@ function ticker() {
   camera.position.set(currentCamX, currentCamY, currentCamZ);
   camera.lookAt(currentCamX * 0.3, currentCamY * 0.3, currentCamZ - 10);
 
-  // Rotate star field slowly
   if (starsPoints) {
     starsPoints.rotation.z = t * 0.01;
   }
 
-  // Animate shapes
   if (shape1) { shape1.rotation.x = t * 0.25; shape1.rotation.y = t * 0.18; }
   if (shape2) { shape2.rotation.y = t * 0.3;  shape2.rotation.z = t * 0.15; shape2.position.y = -1 + Math.sin(t * 0.7) * 0.7; }
   if (shape3) { shape3.rotation.x = t * 0.35; shape3.rotation.y = t * 0.22; shape3.position.y = -2 + Math.cos(t * 0.5) * 0.5; }
   if (shape4) { shape4.rotation.x = t * 0.2;  shape4.rotation.z = t * 0.12; }
 
   renderer.render(scene, camera);
+}
+
+// Pause the render loop when the tab is backgrounded — saves battery/CPU.
+document.addEventListener('visibilitychange', () => {
+  tabHidden = document.hidden;
+});
+
+// ─────────────────────────────────────────────────────────────
+// AMBIENT PARTICLE FIELD (2D canvas) — lightweight, foreground layer
+// ─────────────────────────────────────────────────────────────
+function initParticleField() {
+  const canvas = $('#particles');
+  if (!canvas || prefersReducedMotion()) {
+    if (canvas) canvas.style.display = 'none';
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+  let W, H, dpr;
+  let particles = [];
+  const COUNT = isSmallScreen ? 28 : 60;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = `${W}px`;
+    canvas.style.height = `${H}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function makeParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.6 + Math.random() * 1.8,
+      speedY: 0.08 + Math.random() * 0.22,
+      drift: (Math.random() - 0.5) * 0.15,
+      alpha: 0.15 + Math.random() * 0.35,
+      hue: Math.random() > 0.5 ? '0,200,255' : '167,139,250',
+    };
+  }
+
+  function seed() {
+    particles = Array.from({ length: COUNT }, makeParticle);
+  }
+
+  function draw() {
+    if (tabHidden) { requestAnimationFrame(draw); return; }
+    ctx.clearRect(0, 0, W, H);
+    const light = bodyEl.classList.contains('light');
+    for (const p of particles) {
+      p.y -= p.speedY;
+      p.x += p.drift;
+      if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${p.hue},${light ? p.alpha * 0.6 : p.alpha})`;
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  seed();
+  draw();
+
+  window.addEventListener('resize', () => {
+    resize();
+  }, { passive: true });
+}
+
+// ─────────────────────────────────────────────────────────────
+// CURSOR GLOW — follows the pointer, fades in/out
+// ─────────────────────────────────────────────────────────────
+function initCursorGlow() {
+  const glow = $('#cursorGlow');
+  if (!glow || isTouch || prefersReducedMotion()) return;
+
+  let gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+  let tx = gx, ty = gy;
+  let active = false;
+  let hideTimer = null;
+
+  function raf() {
+    gx = lerp(gx, tx, 0.15);
+    gy = lerp(gy, ty, 0.15);
+    glow.style.transform = `translate(${gx - 160}px, ${gy - 160}px)`;
+    requestAnimationFrame(raf);
+  }
+  raf();
+
+  window.addEventListener('mousemove', (e) => {
+    tx = e.clientX;
+    ty = e.clientY;
+    if (!active) {
+      active = true;
+      glow.classList.add('active');
+    }
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => {
+      active = false;
+      glow.classList.remove('active');
+    }, 2200);
+  }, { passive: true });
+
+  window.addEventListener('mouseleave', () => {
+    active = false;
+    glow.classList.remove('active');
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// MOBILE MENU
+// ─────────────────────────────────────────────────────────────
+function initMobileMenu() {
+  const btn = $('#menuToggle');
+  const menu = $('#mobileMenu');
+  if (!btn || !menu) return;
+
+  const openMenu = () => {
+    menu.hidden = false;
+    btn.setAttribute('aria-expanded', 'true');
+    btn.setAttribute('aria-label', 'Close menu');
+    bodyEl.style.overflow = 'hidden';
+  };
+  const closeMenu = () => {
+    menu.hidden = true;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Open menu');
+    bodyEl.style.overflow = '';
+  };
+
+  btn.addEventListener('click', () => {
+    if (menu.hidden) openMenu(); else closeMenu();
+  });
+
+  $$('#mobileMenu a').forEach((a) => {
+    a.addEventListener('click', closeMenu);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) { closeMenu(); btn.focus(); }
+  });
+
+  // Close automatically if resized past the mobile breakpoint
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 960 && !menu.hidden) closeMenu();
+  }, { passive: true });
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -292,26 +434,24 @@ function onScroll() {
   const maxScroll = document.body.scrollHeight - window.innerHeight;
   const progress  = clamp(scrollY / maxScroll, 0, 1);
 
-  // Progress bar
   if (progressBar) progressBar.style.width = `${progress * 100}%`;
 
-  // Camera Z target from active section
   const activeId = getActiveSectionId();
   if (SECTION_CAM_Z[activeId] !== undefined) {
     targetCamZ = SECTION_CAM_Z[activeId];
   }
 
-  // Dots
   dots.forEach((d) => {
-    d.classList.toggle('active', d.dataset.target === activeId);
+    const isActive = d.dataset.target === activeId;
+    d.classList.toggle('active', isActive);
+    if (isActive) d.setAttribute('aria-current', 'true');
+    else d.removeAttribute('aria-current');
   });
 
-  // Reveal scroll animations
   revealAll();
 
-  // Top nav shadow
   const nav = $('#topNav');
-  if (nav) nav.style.boxShadow = scrollY > 40 ? '0 4px 40px rgba(0,0,30,0.5)' : '';
+  if (nav) nav.classList.toggle('nav-scrolled', scrollY > 40);
 }
 
 window.addEventListener('scroll', onScroll, { passive: true });
@@ -336,7 +476,6 @@ function revealAll() {
   });
 }
 
-// Force hero elements visible immediately (they're in viewport on load)
 function revealHero() {
   $$('#hero .reveal-up, #hero .reveal-left, #hero .reveal-right').forEach((el) => {
     el.classList.add('visible');
@@ -372,7 +511,7 @@ let lenisInstance = null;
 
 function initLenis() {
   if (typeof Lenis === 'undefined') return;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (prefersReducedMotion()) return;
 
   lenisInstance = new Lenis({
     duration: 1.2,
@@ -404,7 +543,7 @@ $$('a[href^="#"]').forEach((a) => {
     if (lenisInstance) {
       lenisInstance.scrollTo(target, { duration: 1.2 });
     } else {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     }
   });
 });
@@ -412,12 +551,8 @@ $$('a[href^="#"]').forEach((a) => {
 // ─────────────────────────────────────────────────────────────
 // 3D TILT ON CARDS
 // ─────────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────────
-// 3D TILT ON CARDS
-// ─────────────────────────────────────────────────────────────
 function initCardTilt() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  if ('ontouchstart' in window) return; // skip on touch
+  if (prefersReducedMotion() || isTouch) return;
 
   $$('.card-3d').forEach((card) => {
     card.addEventListener('mousemove', (e) => {
@@ -436,7 +571,7 @@ function initCardTilt() {
 // PILL 3D HOVER
 // ─────────────────────────────────────────────────────────────
 function initPillTilt() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (prefersReducedMotion() || isTouch) return;
 
   $$('.pill').forEach((pill) => {
     pill.addEventListener('mousemove', (e) => {
@@ -457,6 +592,12 @@ function initTyping() {
   if (!el) return;
 
   const roles = JSON.parse(el.dataset.roles || '[]');
+
+  if (prefersReducedMotion()) {
+    el.textContent = roles[0] || '';
+    return;
+  }
+
   let ri = 0, ci = 0, del = false;
 
   const tick = () => {
@@ -489,21 +630,21 @@ function initAwardModal() {
     img.alt = thumb.alt;
     modal.hidden = false;
     bodyEl.style.overflow = 'hidden';
+    close.focus();
   };
-  const shut = () => { modal.hidden = true; bodyEl.style.overflow = ''; };
+  const shut = () => {
+    modal.hidden = true;
+    bodyEl.style.overflow = '';
+    thumb.focus();
+  };
 
   thumb.addEventListener('dblclick', open);
+  thumb.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+  });
   close.addEventListener('click', shut);
   modal.addEventListener('click', (e) => { if (e.target === modal) shut(); });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !modal.hidden) shut(); });
-}
-
-// ─────────────────────────────────────────────────────────────
-// HERO PHOTO — cutout parallax + idle motion hook
-// ─────────────────────────────────────────────────────────────
-let heroPhotoStage = null;
-function initHeroPhoto() {
-  // Photo is kept stationary without vertical or horizontal movement
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -520,16 +661,15 @@ function hidePreloader() {
 // BOOT
 // ─────────────────────────────────────────────────────────────
 function boot() {
-  // Hide preloader first so content is visible
-  hidePreloader();
+  setTimeout(hidePreloader, 700);
+  ['click', 'keydown', 'scroll', 'touchstart'].forEach((e) => {
+    window.addEventListener(e, hidePreloader, { once: true, passive: true });
+  });
+  window.addEventListener('load', hidePreloader);
 
-  // Reveal hero content immediately (it's already in viewport)
   revealHero();
-
-  // Start observing all other reveal elements
   revealAll();
 
-  // Three.js scene
   if (typeof THREE !== 'undefined') {
     buildThreeScene();
   }
@@ -537,18 +677,16 @@ function boot() {
   initLenis();
   initCardTilt();
   initPillTilt();
-  initHeroPhoto();
+  initParticleField();
+  initCursorGlow();
   initTyping();
   initAwardModal();
+  initMobileMenu();
   onScroll();
 }
 
-// Run on DOMContentLoaded; also try immediately if already loaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);
 } else {
   boot();
 }
-
-// Belt-and-suspenders: also on window load
-window.addEventListener('load', hidePreloader);

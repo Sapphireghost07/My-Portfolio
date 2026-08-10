@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>S Abdul Baasit | Frontend Developer</title>
   <meta name="description" content="S Abdul Baasit – Frontend Developer specialising in Angular, TypeScript, full-stack development and AI-powered delivery. Available for work.">
+
+  <!-- Open Graph / social preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="S Abdul Baasit | Frontend Developer">
+  <meta property="og:description" content="Frontend Developer specialising in Angular, TypeScript, full-stack development and AI-powered delivery.">
+  <meta property="og:image" content="assets/profile.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#03071a">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -16,6 +25,9 @@
   <script>
     document.documentElement.dataset.immersive = 'off';
   </script>
+
+  <!-- Skip link for keyboard / screen-reader users -->
+  <a href="#hero" class="skip-link">Skip to content</a>
 
   <!-- ██ PRELOADER ██ -->
   <div id="preloader" class="preloader">
@@ -55,13 +67,13 @@
 
   <!-- ██ SIDE DOT NAV ██ -->
   <nav class="side-dots" aria-label="Page sections">
-    <a href="#hero"           class="dot active" data-label="Home"             data-target="hero"></a>
-    <a href="#skills"         class="dot"         data-label="Skills"           data-target="skills"></a>
-    <a href="#experience"     class="dot"         data-label="Experience"       data-target="experience"></a>
-    <a href="#projects"       class="dot"         data-label="Projects"         data-target="projects"></a>
-    <a href="#education"      class="dot"         data-label="Education"        data-target="education"></a>
-    <a href="#certifications" class="dot"         data-label="Certifications"   data-target="certifications"></a>
-    <a href="#awards"         class="dot"         data-label="Awards"           data-target="awards"></a>
+    <a href="#hero"           class="dot active" aria-label="Home"           aria-current="true" data-label="Home"             data-target="hero"></a>
+    <a href="#skills"         class="dot"         aria-label="Skills"        data-label="Skills"           data-target="skills"></a>
+    <a href="#experience"     class="dot"         aria-label="Experience"    data-label="Experience"       data-target="experience"></a>
+    <a href="#projects"       class="dot"         aria-label="Projects"      data-label="Projects"         data-target="projects"></a>
+    <a href="#education"      class="dot"         aria-label="Education"     data-label="Education"        data-target="education"></a>
+    <a href="#certifications" class="dot"         aria-label="Certifications" data-label="Certifications"   data-target="certifications"></a>
+    <a href="#awards"         class="dot"         aria-label="Awards"        data-label="Awards"           data-target="awards"></a>
   </nav>
 
   <!-- ██ TOP NAV ██ -->
@@ -75,14 +87,35 @@
     </nav>
     <div class="nav-actions">
       <a href="assets/Abdul_Resume_3.pdf" target="_blank" rel="noreferrer" class="btn-resume" id="nav-resume">
-        <i class="fa-solid fa-file-arrow-down"></i> Resume
+        <i class="fa-solid fa-file-arrow-down"></i> <span>Resume</span>
       </a>
-      <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">
+      <button id="themeToggle" class="theme-btn" type="button" aria-label="Switch to light theme" aria-pressed="false">
         <span class="icon sun" aria-hidden="true"><i class="fa-solid fa-sun"></i></span>
         <span class="icon moon" aria-hidden="true"><i class="fa-solid fa-moon"></i></span>
       </button>
+      <button id="menuToggle" class="menu-btn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+        <span class="menu-bar"></span>
+        <span class="menu-bar"></span>
+        <span class="menu-bar"></span>
+      </button>
     </div>
   </header>
+
+  <!-- ██ MOBILE MENU ██ -->
+  <div id="mobileMenu" class="mobile-menu" hidden>
+    <nav aria-label="Mobile site sections">
+      <a href="#hero">Home</a>
+      <a href="#skills">Skills</a>
+      <a href="#experience">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#education">Education</a>
+      <a href="#certifications">Certifications</a>
+      <a href="#awards">Awards</a>
+      <a href="assets/Abdul_Resume_3.pdf" target="_blank" rel="noreferrer" class="mobile-menu-resume">
+        <i class="fa-solid fa-file-arrow-down"></i> Resume
+      </a>
+    </nav>
+  </div>
 
   <!-- ██ PAGE CONTENT ██ -->
   <main>
@@ -395,8 +428,11 @@
                 alt="AI Transition Award certificate"
                 loading="lazy"
                 width="260"
+                tabindex="0"
+                role="button"
+                aria-label="Zoom into AI Transition Award certificate"
               >
-              <figcaption>Double-click to zoom</figcaption>
+              <figcaption>Double-click or press Enter to zoom</figcaption>
             </figure>
             <div class="award-info">
               <div class="award-badge-wrap">
@@ -443,25 +479,5 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="main.js"></script>
-  <script>
-    /* Preloader & scroll reveal boot */
-    (function() {
-      function killLoader() {
-        var p = document.getElementById('preloader');
-        if (!p || p.classList.contains('hidden')) return;
-        p.classList.add('hidden');
-        setTimeout(function(){ p.style.display = 'none'; }, 700);
-      }
-      setTimeout(killLoader, 700);
-      ['click','keydown','scroll','touchstart'].forEach(function(e) {
-        window.addEventListener(e, killLoader, { once: true, passive: true });
-      });
-
-      setTimeout(function() {
-        var els = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
-        for (var i = 0; i < els.length; i++) { els[i].classList.add('visible'); }
-      }, 1000);
-    })();
-  </script>
 </body>
 </html>
