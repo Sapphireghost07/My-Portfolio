@@ -521,14 +521,15 @@ let lenisInstance = null;
 function initLenis() {
   if (typeof Lenis === 'undefined') return;
   if (prefersReducedMotion()) return;
+  if (!isSmallScreen) return;
 
   lenisInstance = new Lenis({
-    duration: isSmallScreen ? 0.9 : 0.72,
+    duration: 0.8,
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
-    wheelMultiplier: isSmallScreen ? 1 : 1.08,
+    wheelMultiplier: 1,
     touchMultiplier: 1.1,
   });
 
@@ -552,7 +553,7 @@ $$('a[href^="#"]').forEach((a) => {
     if (!target) return;
     e.preventDefault();
     if (lenisInstance) {
-      lenisInstance.scrollTo(target, { duration: 1.2 });
+      lenisInstance.scrollTo(target, { duration: 0.8 });
     } else {
       target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
     }
