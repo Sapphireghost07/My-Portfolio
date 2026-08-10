@@ -19,7 +19,7 @@ const isSmallScreen = window.innerWidth < 720;
 
 // Three.js state
 let renderer, scene, camera, clock;
-let starsPoints, nebulaPoints, tubePoints;
+let starsPoints, nebulaPoints;
 let shape1, shape2, shape3, shape4;
 let threeReady = false;
 let rafId;
@@ -105,7 +105,6 @@ function getSceneColors() {
 function buildThreeScene() {
   const canvas = $('#bg3d');
   if (!canvas || typeof THREE === 'undefined') return;
-  // Respect reduced-motion: skip the heavy flying-camera galaxy entirely.
   if (prefersReducedMotion()) return;
 
   const W = window.innerWidth;
@@ -118,17 +117,16 @@ function buildThreeScene() {
   renderer.setClearColor(colors.bg, 1);
 
   scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(colors.fog, 0.018);
+  scene.fog = new THREE.FogExp2(colors.fog, 0.014);
 
   camera = new THREE.PerspectiveCamera(70, W / H, 0.1, 200);
   camera.position.set(0, 0, 4);
 
   clock = new THREE.Clock();
 
-  // Fewer stars on small/touch screens to keep things smooth.
-  const STAR_COUNT = isSmallScreen ? 1600 : 4000;
-  const posArr  = new Float32Array(STAR_COUNT * 3);
-  const colArr  = new Float32Array(STAR_COUNT * 3);
+  const STAR_COUNT = isSmallScreen ? 1200 : 2200;
+  const posArr = new Float32Array(STAR_COUNT * 3);
+  const colArr = new Float32Array(STAR_COUNT * 3);
   const c1 = new THREE.Color(colors.stars);
   const c2 = new THREE.Color(colors.stars2);
   const c3 = new THREE.Color(colors.stars3);
@@ -136,78 +134,79 @@ function buildThreeScene() {
 
   for (let i = 0; i < STAR_COUNT; i++) {
     const angle = Math.random() * Math.PI * 2;
-    const radius = 5 + Math.random() * 22;
-    posArr[i * 3]     = Math.cos(angle) * radius;
-    posArr[i * 3 + 1] = Math.sin(angle) * radius + (Math.random() - 0.5) * 8;
-    posArr[i * 3 + 2] = 8 - Math.random() * 90;
+    const radius = 5 + Math.random() * 20;
+    posArr[i * 3] = Math.cos(angle) * radius;
+    posArr[i * 3 + 1] = Math.sin(angle) * radius + (Math.random() - 0.5) * 6;
+    posArr[i * 3 + 2] = 8 - Math.random() * 70;
 
     const c = pal[Math.floor(Math.random() * pal.length)];
-    colArr[i * 3]     = c.r;
+    colArr[i * 3] = c.r;
     colArr[i * 3 + 1] = c.g;
     colArr[i * 3 + 2] = c.b;
   }
 
   const starGeo = new THREE.BufferGeometry();
   starGeo.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-  starGeo.setAttribute('color',    new THREE.BufferAttribute(colArr, 3));
+  starGeo.setAttribute('color', new THREE.BufferAttribute(colArr, 3));
 
   const starMat = new THREE.PointsMaterial({
-    size: 0.18,
+    size: 0.16,
     vertexColors: true,
     transparent: true,
-    opacity: bodyEl.classList.contains('light') ? 0.55 : 0.95,
+    opacity: bodyEl.classList.contains('light') ? 0.5 : 0.85,
     sizeAttenuation: true,
   });
 
   starsPoints = new THREE.Points(starGeo, starMat);
   scene.add(starsPoints);
 
-  const NEB_COUNT = isSmallScreen ? 350 : 800;
+  const NEB_COUNT = isSmallScreen ? 260 : 520;
   const nPos = new Float32Array(NEB_COUNT * 3);
   const nCol = new Float32Array(NEB_COUNT * 3);
   const nc1 = new THREE.Color(colors.nebula);
   const nc2 = new THREE.Color(colors.nebula2);
 
   for (let i = 0; i < NEB_COUNT; i++) {
-    nPos[i * 3]     = (Math.random() - 0.5) * 60;
-    nPos[i * 3 + 1] = (Math.random() - 0.5) * 30;
-    nPos[i * 3 + 2] = -30 - Math.random() * 40;
+    nPos[i * 3] = (Math.random() - 0.5) * 50;
+    nPos[i * 3 + 1] = (Math.random() - 0.5) * 24;
+    nPos[i * 3 + 2] = -20 - Math.random() * 30;
 
     const c = Math.random() > 0.5 ? nc1 : nc2;
-    nCol[i * 3]     = c.r;
+    nCol[i * 3] = c.r;
     nCol[i * 3 + 1] = c.g;
     nCol[i * 3 + 2] = c.b;
   }
 
   const nebGeo = new THREE.BufferGeometry();
   nebGeo.setAttribute('position', new THREE.BufferAttribute(nPos, 3));
-  nebGeo.setAttribute('color',    new THREE.BufferAttribute(nCol, 3));
+  nebGeo.setAttribute('color', new THREE.BufferAttribute(nCol, 3));
 
   nebulaPoints = new THREE.Points(nebGeo, new THREE.PointsMaterial({
-    size: 0.6,
+    size: 0.5,
     vertexColors: true,
     transparent: true,
-    opacity: 0.25,
+    opacity: 0.18,
   }));
   scene.add(nebulaPoints);
 
   const mkWire = (geo, color, x, y, z, name) => {
-    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({
+    const material = new THREE.MeshBasicMaterial({
       color,
       wireframe: true,
       transparent: true,
-      opacity: bodyEl.classList.contains('light') ? 0.16 : 0.12,
-    }));
-    m.position.set(x, y, z);
-    m.name = name;
-    scene.add(m);
-    return m;
+      opacity: bodyEl.classList.contains('light') ? 0.14 : 0.1,
+    });
+    const mesh = new THREE.Mesh(geo, material);
+    mesh.position.set(x, y, z);
+    mesh.name = name;
+    scene.add(mesh);
+    return mesh;
   };
 
-  shape1 = mkWire(new THREE.DodecahedronGeometry(1.9, 0), colors.wire1,  6.8,  2.4,  -7,  'shape1');
-  shape2 = mkWire(new THREE.IcosahedronGeometry(1.3, 0),  colors.wire2, -5.5, -0.8, -11, 'shape2');
-  shape3 = mkWire(new THREE.OctahedronGeometry(1.1, 0),   colors.wire3,  4.8, -2.4, -17, 'shape3');
-  shape4 = mkWire(new THREE.TetrahedronGeometry(1.9, 0),  colors.wire4, -6.2,  2.6, -25, 'shape4');
+  shape1 = mkWire(new THREE.IcosahedronGeometry(1.7, 0), colors.wire1, 6.5, 2.1, -9, 'shape1');
+  shape2 = mkWire(new THREE.DodecahedronGeometry(1.4, 0), colors.wire2, -5.8, -0.8, -14, 'shape2');
+  shape3 = mkWire(new THREE.OctahedronGeometry(1.2, 0), colors.wire3, 4.8, -2.6, -18, 'shape3');
+  shape4 = mkWire(new THREE.TetrahedronGeometry(1.7, 0), colors.wire4, -6.4, 2.8, -24, 'shape4');
 
   threeReady = true;
   ticker();
@@ -219,7 +218,7 @@ function updateSceneColors() {
   renderer.setClearColor(colors.bg, 1);
   if (scene.fog) scene.fog.color.set(colors.fog);
   if (starsPoints) {
-    starsPoints.material.opacity = bodyEl.classList.contains('light') ? 0.55 : 0.95;
+    starsPoints.material.opacity = bodyEl.classList.contains('light') ? 0.5 : 0.85;
   }
   [
     { obj: shape1, col: colors.wire1 },
@@ -229,7 +228,7 @@ function updateSceneColors() {
   ].forEach(({ obj, col }) => {
     if (obj) {
       obj.material.color.set(col);
-      obj.material.opacity = bodyEl.classList.contains('light') ? 0.16 : 0.12;
+      obj.material.opacity = bodyEl.classList.contains('light') ? 0.14 : 0.1;
     }
   });
 }
@@ -241,20 +240,36 @@ function ticker() {
   const t = clock.getElapsedTime();
 
   currentCamZ = lerp(currentCamZ, targetCamZ, 0.04);
-  currentCamX = lerp(currentCamX, targetCamX + mouseNX * 2.5, 0.04);
-  currentCamY = lerp(currentCamY, targetCamY + mouseNY * 1.5, 0.04);
+  currentCamX = lerp(currentCamX, targetCamX + mouseNX * 1.8, 0.04);
+  currentCamY = lerp(currentCamY, targetCamY + mouseNY * 1.2, 0.04);
 
   camera.position.set(currentCamX, currentCamY, currentCamZ);
   camera.lookAt(currentCamX * 0.3, currentCamY * 0.3, currentCamZ - 10);
 
   if (starsPoints) {
-    starsPoints.rotation.z = t * 0.01;
+    starsPoints.rotation.z = t * 0.008;
   }
 
-  if (shape1) { shape1.rotation.x = t * 0.12; shape1.rotation.y = t * 0.16; shape1.position.y = 2.4 + Math.sin(t * 0.35) * 0.18; }
-  if (shape2) { shape2.rotation.y = t * 0.2;  shape2.rotation.z = t * 0.1;  shape2.position.y = -0.8 + Math.sin(t * 0.45) * 0.28; }
-  if (shape3) { shape3.rotation.x = t * 0.22; shape3.rotation.y = t * 0.14; shape3.position.y = -2.4 + Math.cos(t * 0.38) * 0.22; }
-  if (shape4) { shape4.rotation.x = t * 0.1;  shape4.rotation.z = t * 0.08; shape4.position.y = 2.6 + Math.sin(t * 0.3) * 0.16; }
+  if (shape1) {
+    shape1.rotation.x = t * 0.12;
+    shape1.rotation.y = t * 0.14;
+    shape1.position.y = 2.1 + Math.sin(t * 0.35) * 0.16;
+  }
+  if (shape2) {
+    shape2.rotation.y = t * 0.18;
+    shape2.rotation.z = t * 0.09;
+    shape2.position.y = -0.8 + Math.sin(t * 0.42) * 0.2;
+  }
+  if (shape3) {
+    shape3.rotation.x = t * 0.2;
+    shape3.rotation.y = t * 0.12;
+    shape3.position.y = -2.6 + Math.cos(t * 0.38) * 0.16;
+  }
+  if (shape4) {
+    shape4.rotation.x = t * 0.1;
+    shape4.rotation.z = t * 0.08;
+    shape4.position.y = 2.8 + Math.sin(t * 0.3) * 0.12;
+  }
 
   renderer.render(scene, camera);
 }
