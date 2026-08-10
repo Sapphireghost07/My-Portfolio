@@ -196,7 +196,7 @@ function buildThreeScene() {
       color,
       wireframe: true,
       transparent: true,
-      opacity: bodyEl.classList.contains('light') ? 0.25 : 0.2,
+      opacity: bodyEl.classList.contains('light') ? 0.16 : 0.12,
     }));
     m.position.set(x, y, z);
     m.name = name;
@@ -204,10 +204,10 @@ function buildThreeScene() {
     return m;
   };
 
-  shape1 = mkWire(new THREE.TorusKnotGeometry(1.6, 0.45, 128, 16), colors.wire1,  5, 1.5, -2,  'shape1');
-  shape2 = mkWire(new THREE.IcosahedronGeometry(1.4, 0),           colors.wire2, -5, -1,  -8,  'shape2');
-  shape3 = mkWire(new THREE.OctahedronGeometry(1.2, 0),            colors.wire3,  4, -2,  -14, 'shape3');
-  shape4 = mkWire(new THREE.TorusGeometry(1.5, 0.4, 16, 80),       colors.wire4, -4,  2,  -22, 'shape4');
+  shape1 = mkWire(new THREE.DodecahedronGeometry(1.9, 0), colors.wire1,  6.8,  2.4,  -7,  'shape1');
+  shape2 = mkWire(new THREE.IcosahedronGeometry(1.3, 0),  colors.wire2, -5.5, -0.8, -11, 'shape2');
+  shape3 = mkWire(new THREE.OctahedronGeometry(1.1, 0),   colors.wire3,  4.8, -2.4, -17, 'shape3');
+  shape4 = mkWire(new THREE.TetrahedronGeometry(1.9, 0),  colors.wire4, -6.2,  2.6, -25, 'shape4');
 
   threeReady = true;
   ticker();
@@ -229,7 +229,7 @@ function updateSceneColors() {
   ].forEach(({ obj, col }) => {
     if (obj) {
       obj.material.color.set(col);
-      obj.material.opacity = bodyEl.classList.contains('light') ? 0.25 : 0.2;
+      obj.material.opacity = bodyEl.classList.contains('light') ? 0.16 : 0.12;
     }
   });
 }
@@ -251,10 +251,10 @@ function ticker() {
     starsPoints.rotation.z = t * 0.01;
   }
 
-  if (shape1) { shape1.rotation.x = t * 0.25; shape1.rotation.y = t * 0.18; }
-  if (shape2) { shape2.rotation.y = t * 0.3;  shape2.rotation.z = t * 0.15; shape2.position.y = -1 + Math.sin(t * 0.7) * 0.7; }
-  if (shape3) { shape3.rotation.x = t * 0.35; shape3.rotation.y = t * 0.22; shape3.position.y = -2 + Math.cos(t * 0.5) * 0.5; }
-  if (shape4) { shape4.rotation.x = t * 0.2;  shape4.rotation.z = t * 0.12; }
+  if (shape1) { shape1.rotation.x = t * 0.12; shape1.rotation.y = t * 0.16; shape1.position.y = 2.4 + Math.sin(t * 0.35) * 0.18; }
+  if (shape2) { shape2.rotation.y = t * 0.2;  shape2.rotation.z = t * 0.1;  shape2.position.y = -0.8 + Math.sin(t * 0.45) * 0.28; }
+  if (shape3) { shape3.rotation.x = t * 0.22; shape3.rotation.y = t * 0.14; shape3.position.y = -2.4 + Math.cos(t * 0.38) * 0.22; }
+  if (shape4) { shape4.rotation.x = t * 0.1;  shape4.rotation.z = t * 0.08; shape4.position.y = 2.6 + Math.sin(t * 0.3) * 0.16; }
 
   renderer.render(scene, camera);
 }
@@ -380,18 +380,21 @@ function initCursorGlow() {
 function initMobileMenu() {
   const btn = $('#menuToggle');
   const menu = $('#mobileMenu');
+  const topNav = $('#topNav');
   if (!btn || !menu) return;
 
   const openMenu = () => {
     menu.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
     btn.setAttribute('aria-label', 'Close menu');
+    if (topNav) topNav.classList.add('menu-open');
     bodyEl.style.overflow = 'hidden';
   };
   const closeMenu = () => {
     menu.hidden = true;
     btn.setAttribute('aria-expanded', 'false');
     btn.setAttribute('aria-label', 'Open menu');
+    if (topNav) topNav.classList.remove('menu-open');
     bodyEl.style.overflow = '';
   };
 
@@ -400,7 +403,27 @@ function initMobileMenu() {
   });
 
   $$('#mobileMenu a').forEach((a) => {
-    a.addEventListener('click', closeMenu);
+    a.addEventListener('click', (e) => {
+      const href = a.getAttribute('href');
+      if (!href || !href.startsWith('#')) {
+        closeMenu();
+        return;
+      }
+
+      const target = $(href);
+      if (!target) {
+        closeMenu();
+        return;
+      }
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      closeMenu();
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'auto', block: 'start' });
+        scheduleScrollUpdate();
+      });
+    }, true);
   });
 
   document.addEventListener('keydown', (e) => {
